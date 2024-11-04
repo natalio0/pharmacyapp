@@ -16,7 +16,7 @@ class AppTheme {
     ),
     snackBarTheme: const SnackBarThemeData(
       backgroundColor: AppColors.background,
-      contentTextStyle: TextStyle(color: Colors.white),
+      contentTextStyle: TextStyle(color: Color.fromARGB(255, 65, 65, 65)),
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,

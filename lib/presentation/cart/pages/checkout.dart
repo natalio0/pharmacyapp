@@ -1,7 +1,10 @@
+import 'dart:math';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pharmacyapp/common/bloc/button/button_state_cubit.dart';
 import 'package:pharmacyapp/common/helper/cart/cart.dart';
 import 'package:pharmacyapp/common/widgets/button/basic_reactive_button.dart';
 import 'package:pharmacyapp/data/order/models/order_registration_req.dart';
+import 'package:pharmacyapp/domain/order/entities/order_status.dart';
 import 'package:pharmacyapp/domain/order/usecases/order_registration.dart';
 import 'package:pharmacyapp/presentation/cart/pages/order_placed.dart';
 import 'package:flutter/material.dart';
@@ -69,15 +72,27 @@ class CheckOutPage extends StatelessWidget {
                         ),
                       ),
                       onPressed: () {
+                        String orderCode = _generateOrderCode();
+                        List<OrderStatusEntity> orderStatus = [
+                          OrderStatusEntity(
+                            title: 'Order Placed',
+                            done: true,
+                            createdDate: Timestamp.fromDate(
+                                DateTime.now()), // Use createdDate here
+                          )
+                        ];
                         context.read<ButtonStateCubit>().execute(
                             usecase: OrderRegistrationUseCase(),
                             params: OrderRegistrationReq(
-                                products: products,
-                                createdDate: DateTime.now().toString(),
-                                itemCount: products.length,
-                                totalPrice:
-                                    CartHelper.calculateCartSubtotal(products),
-                                shippingAddress: _addressCon.text));
+                              code: orderCode,
+                              orderStatus: orderStatus,
+                              products: products,
+                              createdDate: DateTime.now().toString(),
+                              itemCount: products.length,
+                              totalPrice:
+                                  CartHelper.calculateCartSubtotal(products),
+                              shippingAddress: _addressCon.text,
+                            ));
                       })
                 ],
               );
@@ -96,4 +111,10 @@ class CheckOutPage extends StatelessWidget {
       decoration: const InputDecoration(hintText: 'Shipping Address'),
     );
   }
+}
+
+String _generateOrderCode() {
+  final random = Random();
+  final code = List.generate(6, (index) => random.nextInt(10)).join();
+  return '-$code';
 }

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:logger/logger.dart';
 
 import '../models/user_creation_req.dart';
 import '../models/user_signin_req.dart';
@@ -12,6 +13,22 @@ abstract class AuthFirebaseService {
   Future<Either> sendPasswordResetEmail(String email);
   Future<bool> isLoggedIn();
   Future<Either> getUser();
+}
+
+class AuthService {
+  final FirebaseAuth _auth =
+      FirebaseAuth.instance; // Initialize your auth instance
+  final Logger _logger = Logger(); // Initialize the logger
+
+  // Logout method
+  Future<void> logout() async {
+    try {
+      await _auth.signOut(); // Sign out from Firebase
+    } catch (e) {
+      // Log the error using the logger
+      _logger.e("Logout error: $e"); // Use .e() for error logging
+    }
+  }
 }
 
 class AuthFirebaseServiceImpl extends AuthFirebaseService {

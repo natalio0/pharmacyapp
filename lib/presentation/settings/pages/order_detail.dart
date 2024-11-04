@@ -51,7 +51,7 @@ class OrderDetailPage extends StatelessWidget {
                     decoration: BoxDecoration(
                         color: orderEntity.orderStatus[index].done
                             ? AppColors.primary
-                            : Colors.white,
+                            : const Color.fromARGB(255, 255, 255, 255),
                         shape: BoxShape.circle),
                     child: orderEntity.orderStatus[index].done
                         ? const Icon(Icons.check)
@@ -66,8 +66,8 @@ class OrderDetailPage extends StatelessWidget {
                         fontWeight: FontWeight.w500,
                         fontSize: 16,
                         color: orderEntity.orderStatus[index].done
-                            ? Colors.white
-                            : Colors.grey),
+                            ? const Color.fromARGB(255, 0, 0, 0)
+                            : const Color.fromARGB(255, 0, 0, 0)),
                   )
                 ],
               ),
@@ -80,8 +80,8 @@ class OrderDetailPage extends StatelessWidget {
                     fontWeight: FontWeight.w500,
                     fontSize: 14,
                     color: orderEntity.orderStatus[index].done
-                        ? Colors.white
-                        : Colors.grey),
+                        ? const Color.fromARGB(255, 0, 0, 0)
+                        : const Color.fromARGB(255, 0, 0, 0)),
               )
             ],
           );

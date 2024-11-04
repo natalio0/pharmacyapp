@@ -1,8 +1,8 @@
-import 'package:pharmacyapp/common/widgets/appbar/app_bar.dart';
-import 'package:pharmacyapp/presentation/settings/widgets/my_orders_tile.dart';
 import 'package:flutter/material.dart';
-
-import '../widgets/my_favorties_tile.dart';
+import 'package:pharmacyapp/common/widgets/appbar/app_bar.dart';
+import 'package:pharmacyapp/presentation/settings/widgets/logout_tile.dart';
+import 'package:pharmacyapp/presentation/settings/widgets/my_orders_tile.dart';
+import 'package:pharmacyapp/presentation/settings/widgets/my_favorties_tile.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -18,10 +18,11 @@ class SettingsPage extends StatelessWidget {
         child: Column(
           children: [
             MyFavortiesTile(),
-            SizedBox(
-              height: 15,
-            ),
-            MyOrdersTile()
+            SizedBox(height: 15),
+            MyOrdersTile(),
+            SizedBox(height: 20),
+            LogOutTile(),
+            SizedBox(height: 20),
           ],
         ),
       ),
