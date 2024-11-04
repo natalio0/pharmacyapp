@@ -3,8 +3,6 @@ import 'package:pharmacyapp/presentation/product_detail/bloc/favorite_icon_cubit
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../core/configs/theme/app_colors.dart';
-
 class FavoriteButton extends StatelessWidget {
   final ProductEntity productEntity;
   const FavoriteButton({required this.productEntity, super.key});
@@ -19,7 +17,7 @@ class FavoriteButton extends StatelessWidget {
         height: 40,
         width: 40,
         decoration: const BoxDecoration(
-            color: AppColors.secondBackground, shape: BoxShape.circle),
+            color: Color.fromARGB(244, 189, 189, 189), shape: BoxShape.circle),
         child: BlocBuilder<FavoriteIconCubit, bool>(
           builder: (context, state) => Icon(
               state ? Icons.favorite : Icons.favorite_outline,

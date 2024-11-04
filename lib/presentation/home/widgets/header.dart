@@ -1,11 +1,14 @@
+import 'package:pharmacyapp/common/helper/navigator/app_navigator.dart';
 import 'package:pharmacyapp/core/configs/assets/app_images.dart';
 import 'package:pharmacyapp/core/configs/assets/app_vectors.dart';
 import 'package:pharmacyapp/core/configs/theme/app_colors.dart';
 import 'package:pharmacyapp/domain/auth/entity/user.dart';
+import 'package:pharmacyapp/presentation/cart/pages/cart.dart';
 import 'package:pharmacyapp/presentation/home/bloc/user_info_display_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:pharmacyapp/presentation/settings/pages/settings.dart';
 
 import '../bloc/user_info_display_state.dart';
 
@@ -29,7 +32,7 @@ class Header extends StatelessWidget {
                 children: [
                   _profileImage(state.user, context),
                   _welcomeMessage(state.user),
-                  _card(context),
+                  _card(context)
                 ],
               );
             }
@@ -41,50 +44,56 @@ class Header extends StatelessWidget {
   }
 
   Widget _profileImage(UserEntity user, BuildContext context) {
-    return Container(
-      height: 40,
-      width: 40,
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: user.image.isEmpty
-              ? const AssetImage(AppImages.profile)
-              : NetworkImage(user.image),
-        ),
-        color: Colors.red,
-        shape: BoxShape.circle,
-      ),
-    );
-  }
-
-  Widget _welcomeMessage(UserEntity user) {
-    return Container(
-      height: 40,
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      decoration: BoxDecoration(
-        color: AppColors.secondBackground,
-        borderRadius: BorderRadius.circular(100),
-      ),
-      child: Center(
-        child: Text(
-          'Hi, ${user.firstName}', // Ganti 'name' sesuai dengan properti yang ada
-          style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
-        ),
+    return GestureDetector(
+      onTap: () {
+        AppNavigator.push(context, const SettingsPage());
+      },
+      child: Container(
+        height: 40,
+        width: 40,
+        decoration: BoxDecoration(
+            image: DecorationImage(
+                image: user.image.isEmpty
+                    ? const AssetImage(AppImages.profile)
+                    : NetworkImage(user.image)),
+            color: Colors.red,
+            shape: BoxShape.circle),
       ),
     );
   }
 
   Widget _card(BuildContext context) {
-    return Container(
-      height: 40,
-      width: 40,
-      decoration: const BoxDecoration(
-        color: AppColors.primary,
-        shape: BoxShape.circle,
-      ),
-      child: SvgPicture.asset(
-        AppVectors.bag,
-        fit: BoxFit.none,
+    return GestureDetector(
+      onTap: () {
+        AppNavigator.push(context, const CartPage());
+      },
+      child: Container(
+        height: 40,
+        width: 40,
+        decoration: const BoxDecoration(
+            color: AppColors.primary, shape: BoxShape.circle),
+        child: SvgPicture.asset(
+          AppVectors.bag,
+          fit: BoxFit.none,
+        ),
       ),
     );
   }
+}
+
+Widget _welcomeMessage(UserEntity user) {
+  return Container(
+    height: 40,
+    padding: const EdgeInsets.symmetric(horizontal: 16),
+    decoration: BoxDecoration(
+      color: AppColors.secondBackground,
+      borderRadius: BorderRadius.circular(100),
+    ),
+    child: Center(
+      child: Text(
+        'Hi, ${user.firstName}', // Ganti 'name' sesuai dengan properti yang ada
+        style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+      ),
+    ),
+  );
 }

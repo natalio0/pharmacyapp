@@ -5,6 +5,7 @@ import 'package:logger/logger.dart';
 import 'package:pharmacyapp/common/helper/navigator/app_navigator.dart';
 import 'package:pharmacyapp/common/widgets/appbar/app_bar.dart';
 import 'package:pharmacyapp/common/widgets/button/basic_app_button.dart';
+import 'package:pharmacyapp/core/configs/theme/app_colors.dart';
 import 'package:pharmacyapp/presentation/auth/pages/forgot_password.dart';
 import 'package:pharmacyapp/presentation/auth/pages/signup.dart';
 import 'package:pharmacyapp/presentation/home/pages/home.dart';
@@ -142,14 +143,17 @@ class _SigninPageState extends State<SigninPage> {
     return RichText(
       text: TextSpan(
         children: [
-          const TextSpan(text: "Don't you have an account? "),
+          const TextSpan(
+              text: "Don't you have an account? ",
+              style: TextStyle(color: Colors.black)),
           TextSpan(
             text: 'Create one',
             recognizer: TapGestureRecognizer()
               ..onTap = () {
                 AppNavigator.push(context, SignupPage());
               },
-            style: const TextStyle(fontWeight: FontWeight.bold),
+            style: const TextStyle(
+                fontWeight: FontWeight.bold, color: AppColors.primary),
           ),
         ],
       ),
@@ -159,14 +163,16 @@ class _SigninPageState extends State<SigninPage> {
   Widget _forgotPassword(BuildContext context) {
     return RichText(
       text: TextSpan(children: [
-        const TextSpan(text: "Forgot password? "),
+        const TextSpan(
+            text: "Forgot password? ", style: TextStyle(color: Colors.black)),
         TextSpan(
           text: 'Reset',
           recognizer: TapGestureRecognizer()
             ..onTap = () {
               AppNavigator.push(context, ForgotPasswordPage());
             },
-          style: const TextStyle(fontWeight: FontWeight.bold),
+          style: const TextStyle(
+              fontWeight: FontWeight.bold, color: AppColors.primary),
         )
       ]),
     );

@@ -5,7 +5,7 @@ import 'package:pharmacyapp/presentation/home/widgets/search_field.dart';
 import 'package:pharmacyapp/presentation/home/widgets/top_selling.dart';
 // import 'package:pharmacyapp/presentation/home/widgets/categories.dart';
 // import 'package:pharmacyapp/presentation/home/widgets/header.dart';
-// import 'package:pharmacyapp/presentation/home/widgets/new_in.dart';
+import 'package:pharmacyapp/presentation/home/widgets/new_in.dart';
 // import 'package:pharmacyapp/presentation/home/widgets/search_field.dart';
 // import 'package:pharmacyapp/presentation/home/widgets/top_selling.dart';
 
@@ -34,7 +34,10 @@ class HomePage extends StatelessWidget {
           SizedBox(
             height: 24,
           ),
-          // NewIn()
+          NewIn(),
+          SizedBox(
+            height: 24,
+          )
         ],
       ),
     ));

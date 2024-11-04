@@ -67,7 +67,7 @@ class AddToBag extends StatelessWidget {
                   },
                 ),
                 const Text(
-                  'Add to Bag',
+                  'Add to Cart',
                   style: TextStyle(
                       fontWeight: FontWeight.w500,
                       color: Colors.white,

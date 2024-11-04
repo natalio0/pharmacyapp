@@ -30,9 +30,11 @@ class SearchField extends StatelessWidget {
                 OutlineInputBorder(borderRadius: BorderRadius.circular(50)),
             prefixIcon: SvgPicture.asset(
               AppVectors.search,
+              // ignore: deprecated_member_use
+              color: Colors.black,
               fit: BoxFit.none,
             ),
-            hintText: 'search'),
+            hintText: 'Cari'),
       ),
     );
   }

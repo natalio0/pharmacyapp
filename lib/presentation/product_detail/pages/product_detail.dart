@@ -56,7 +56,7 @@ class ProductDetailPage extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
                   productEntity.descriptions,
-                  style: const TextStyle(fontSize: 14, color: Colors.white),
+                  style: const TextStyle(fontSize: 14, color: Colors.black),
                 ),
               ),
               const SizedBox(height: 20),
