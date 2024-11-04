@@ -6,6 +6,7 @@ import 'package:pharmacyapp/data/order/repository/order.dart';
 import 'package:pharmacyapp/data/order/source/order_firebase_service.dart';
 import 'package:pharmacyapp/data/product/repository/product.dart';
 import 'package:pharmacyapp/domain/auth/repository/auth.dart';
+import 'package:pharmacyapp/domain/auth/usecases/get_admin.dart';
 import 'package:pharmacyapp/domain/auth/usecases/get_ages.dart';
 import 'package:pharmacyapp/domain/auth/usecases/get_user.dart';
 import 'package:pharmacyapp/domain/auth/usecases/is_logged_in.dart';
@@ -69,6 +70,8 @@ Future<void> initializeDependencies() async {
   sl.registerSingleton<IsLoggedInUseCase>(IsLoggedInUseCase());
 
   sl.registerSingleton<GetUserUseCase>(GetUserUseCase());
+
+  sl.registerSingleton<GetAdminUseCase>(GetAdminUseCase());
 
   sl.registerSingleton<GetCategoriesUseCase>(GetCategoriesUseCase());
 

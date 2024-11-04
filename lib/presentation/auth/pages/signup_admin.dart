@@ -1,14 +1,13 @@
 import 'package:pharmacyapp/common/helper/navigator/app_navigator.dart';
 import 'package:pharmacyapp/common/widgets/appbar/app_bar.dart';
 import 'package:pharmacyapp/common/widgets/button/basic_app_button.dart';
-import 'package:pharmacyapp/data/auth/models/user_creation_req.dart';
-import 'package:pharmacyapp/presentation/auth/pages/gender_and_age_selection.dart';
-import 'package:pharmacyapp/presentation/auth/pages/sigininuser.dart';
+import 'package:pharmacyapp/data/auth/models/admin_creation_req.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:pharmacyapp/presentation/auth/pages/signinadmin.dart';
 
-class SignupPage extends StatelessWidget {
-  SignupPage({super.key});
+class SignupAdminPage extends StatelessWidget {
+  SignupAdminPage({super.key});
 
   final TextEditingController _firstNameCon = TextEditingController();
   final TextEditingController _lastNameCon = TextEditingController();
@@ -154,15 +153,12 @@ class SignupPage extends StatelessWidget {
 
         // Proceed to the next page if all validations pass
         AppNavigator.push(
-          context,
-          GenderAndAgeSelectionPage(
-            userCreationReq: UserCreationReq(
+          context, AdminCreationReq(
               firstName: _firstNameCon.text,
               email: _emailCon.text,
               lastName: _lastNameCon.text,
               password: _passwordCon.text,
-            ),
-          ),
+            ) as Widget,
         );
       },
       title: 'Continue',
@@ -177,7 +173,7 @@ class SignupPage extends StatelessWidget {
             text: 'Signin',
             recognizer: TapGestureRecognizer()
               ..onTap = () {
-                AppNavigator.pushReplacement(context, const SigninuserPage());
+                AppNavigator.pushReplacement(context, const SigninAdminPage());
               },
             style: const TextStyle(fontWeight: FontWeight.bold))
       ]),

@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:logger/logger.dart';
+import 'package:pharmacyapp/data/auth/models/admin_creation_req.dart';
+import 'package:pharmacyapp/data/auth/models/admin_signin_req.dart';
 
 import '../models/user_creation_req.dart';
 import '../models/user_signin_req.dart';
@@ -9,10 +11,13 @@ import '../models/user_signin_req.dart';
 abstract class AuthFirebaseService {
   Future<Either> signup(UserCreationReq user);
   Future<Either> signin(UserSigninReq user);
+  Future<Either> adminSignup(AdminCreationReq admin);
+  Future<Either> adminSignin(AdminSigninReq admin);
   Future<Either> getAges();
   Future<Either> sendPasswordResetEmail(String email);
   Future<bool> isLoggedIn();
   Future<Either> getUser();
+  Future<Either> getAdmin();
 }
 
 class AuthService {
@@ -52,7 +57,7 @@ class AuthFirebaseServiceImpl extends AuthFirebaseService {
         'userId': returnedData.user!.uid
       });
 
-      return const Right('Sign up was successfull');
+      return const Right('Sign up was successful');
     } on FirebaseAuthException catch (e) {
       String message = '';
 
@@ -81,12 +86,12 @@ class AuthFirebaseServiceImpl extends AuthFirebaseService {
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: user.email!, password: user.password!);
-      return const Right('Sign in was successfull');
+      return const Right('Sign in was successful');
     } on FirebaseAuthException catch (e) {
       String message = '';
 
       if (e.code == 'invalid-email') {
-        message = 'Not user found for this email';
+        message = 'No user found for this email';
       } else if (e.code == 'invalid-credential') {
         message = 'Wrong password provided for this user';
       }
@@ -107,11 +112,7 @@ class AuthFirebaseServiceImpl extends AuthFirebaseService {
 
   @override
   Future<bool> isLoggedIn() async {
-    if (FirebaseAuth.instance.currentUser != null) {
-      return true;
-    } else {
-      return false;
-    }
+    return FirebaseAuth.instance.currentUser != null;
   }
 
   @override
@@ -124,6 +125,71 @@ class AuthFirebaseServiceImpl extends AuthFirebaseService {
           .get()
           .then((value) => value.data());
       return Right(userData);
+    } catch (e) {
+      return const Left('Please try again');
+    }
+  }
+
+  @override
+  Future<Either> adminSignup(AdminCreationReq admin) async {
+    try {
+      var returnedData = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+              email: admin.email!, password: admin.password!);
+
+      await FirebaseFirestore.instance
+          .collection('Admins')
+          .doc(returnedData.user!.uid)
+          .set({
+        'firstName': admin.firstName,
+        'lastName': admin.lastName,
+        'email': admin.email,
+        'adminId': returnedData.user!.uid,
+      });
+
+      return const Right('Admin sign up was successful');
+    } on FirebaseAuthException catch (e) {
+      String message = '';
+
+      if (e.code == 'weak-password') {
+        message = 'The password provided is too weak';
+      } else if (e.code == 'email-already-in-use') {
+        message = 'An account already exists with that email.';
+      }
+
+      return Left(message);
+    }
+  }
+
+  @override
+  Future<Either> adminSignin(AdminSigninReq admin) async {
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: admin.email!, password: admin.password!);
+      return const Right('Admin sign in was successful');
+    } on FirebaseAuthException catch (e) {
+      String message = '';
+
+      if (e.code == 'invalid-email') {
+        message = 'No admin found for this email';
+      } else if (e.code == 'invalid-credential') {
+        message = 'Wrong password provided for this admin';
+      }
+
+      return Left(message);
+    }
+  }
+
+  @override
+  Future<Either> getAdmin() async {
+    try {
+      var currentAdmin = FirebaseAuth.instance.currentUser;
+      var adminData = await FirebaseFirestore.instance
+          .collection('Admins')
+          .doc(currentAdmin?.uid)
+          .get()
+          .then((value) => value.data());
+      return Right(adminData);
     } catch (e) {
       return const Left('Please try again');
     }

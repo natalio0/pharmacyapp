@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pharmacyapp/core/configs/theme/app_colors.dart';
 import 'package:pharmacyapp/data/auth/source/auth_firebase_service.dart';
-import 'package:pharmacyapp/presentation/auth/pages/siginin.dart';
+import 'package:pharmacyapp/presentation/auth/pages/welcomepage.dart';
 import '../../../common/helper/navigator/app_navigator.dart';
 
 class LogOutTile extends StatelessWidget {
@@ -13,7 +13,7 @@ class LogOutTile extends StatelessWidget {
       onTap: () async {
         await AuthService().logout();
         if (context.mounted) {
-          AppNavigator.pushAndRemove(context, const SigninPage());
+          AppNavigator.pushAndRemove(context, const WelcomePage());
         }
       },
       child: Container(

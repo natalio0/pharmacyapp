@@ -1,4 +1,7 @@
 import 'package:dartz/dartz.dart';
+import 'package:pharmacyapp/data/auth/models/admin.dart';
+import 'package:pharmacyapp/data/auth/models/admin_creation_req.dart';
+import 'package:pharmacyapp/data/auth/models/admin_signin_req.dart';
 import 'package:pharmacyapp/data/auth/models/user.dart';
 import 'package:pharmacyapp/data/auth/models/user_creation_req.dart';
 import 'package:pharmacyapp/data/auth/models/user_signin_req.dart';
@@ -39,6 +42,36 @@ class AuthRepositoryImpl extends AuthRepository {
       return Left(error);
     }, (data) {
       return Right(UserModel.fromMap(data).toEntity());
+    });
+  }
+
+  @override
+  Future<Either> getAdmin() async {
+    var admin = await sl<AuthFirebaseService>().getAdmin();
+    return admin.fold((error) {
+      return Left(error);
+    }, (data) {
+      return Right(AdminModel.fromMap(data).toEntity());
+    });
+  }
+
+  @override
+  Future<Either> adminSignin(AdminSigninReq admin) async {
+    var result = await sl<AuthFirebaseService>().adminSignin(admin);
+    return result.fold((error) {
+      return Left(error);
+    }, (data) {
+      return Right(AdminModel.fromMap(data).toEntity());
+    });
+  }
+
+  @override
+  Future<Either> adminSignup(AdminCreationReq admin) async {
+    var result = await sl<AuthFirebaseService>().adminSignup(admin);
+    return result.fold((error) {
+      return Left(error);
+    }, (data) {
+      return Right(AdminModel.fromMap(data).toEntity());
     });
   }
 }
