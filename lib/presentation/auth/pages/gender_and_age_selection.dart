@@ -7,7 +7,7 @@ import 'package:pharmacyapp/domain/auth/usecases/siginup.dart';
 import 'package:pharmacyapp/presentation/auth/bloc/age_selection_cubit.dart';
 import 'package:pharmacyapp/presentation/auth/bloc/ages_display_cubit.dart';
 import 'package:pharmacyapp/presentation/auth/bloc/gender_selection_cubit.dart';
-import 'package:pharmacyapp/presentation/auth/pages/siginin.dart';
+import 'package:pharmacyapp/presentation/auth/pages/sigininuser.dart';
 import 'package:pharmacyapp/presentation/auth/widgets/ages.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -49,7 +49,7 @@ class GenderAndAgeSelectionPage extends StatelessWidget {
               // Navigate to SignInPage after showing success message
               Navigator.pushAndRemoveUntil(
                 context,
-                MaterialPageRoute(builder: (context) => const SigninPage()),
+                MaterialPageRoute(builder: (context) => const SigninuserPage()),
                 (route) => false, // This will remove all previous routes
               );
             }

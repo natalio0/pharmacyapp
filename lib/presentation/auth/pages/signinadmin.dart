@@ -10,18 +10,21 @@ import 'package:pharmacyapp/presentation/auth/pages/forgot_password.dart';
 import 'package:pharmacyapp/presentation/auth/pages/signup.dart';
 import 'package:pharmacyapp/presentation/home/pages/home.dart';
 
-class SigninPage extends StatefulWidget {
-  const SigninPage({super.key});
+class SigninAdminPage extends StatefulWidget {
+  const SigninAdminPage({super.key});
 
   @override
-  State<SigninPage> createState() => _SigninPageState();
+  State<SigninAdminPage> createState() => _SigninAdminPageState();
 }
 
-class _SigninPageState extends State<SigninPage> {
+class _SigninAdminPageState extends State<SigninAdminPage> {
   final TextEditingController _emailCon = TextEditingController();
   final TextEditingController _passwordCon = TextEditingController();
   final Logger _logger = Logger();
   final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  // Tentukan daftar email admin yang diizinkan
+  final List<String> _adminEmails = ['admin@example.com'];
 
   @override
   void dispose() {
@@ -33,7 +36,7 @@ class _SigninPageState extends State<SigninPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const BasicAppbar(hideBack: true),
+      appBar: const BasicAppbar(),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 40),
         child: Column(
@@ -58,7 +61,7 @@ class _SigninPageState extends State<SigninPage> {
 
   Widget _signInText() {
     return const Text(
-      'Sign in',
+      'Admin Sign in',
       style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
     );
   }
@@ -66,7 +69,7 @@ class _SigninPageState extends State<SigninPage> {
   Widget _emailField() {
     return TextField(
       controller: _emailCon,
-      decoration: const InputDecoration(hintText: 'Enter Email'),
+      decoration: const InputDecoration(hintText: 'Enter Admin Email'),
       keyboardType: TextInputType.emailAddress,
     );
   }
@@ -81,13 +84,19 @@ class _SigninPageState extends State<SigninPage> {
 
   Future<bool> _signInWithEmail(String email, String password) async {
     try {
+      // Periksa apakah email termasuk email admin
+      if (!_adminEmails.contains(email)) {
+        _showSnackBar('Unauthorized access');
+        return false;
+      }
+
       await _auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
-      return true; // Sign-in successful
+      return true; // Login berhasil
     } on FirebaseAuthException catch (e) {
-      // Handle sign-in errors
+      // Tangani kesalahan login
       if (e.code == 'user-not-found') {
         _showSnackBar('Email not registered');
       } else if (e.code == 'wrong-password') {
@@ -95,12 +104,12 @@ class _SigninPageState extends State<SigninPage> {
       } else {
         _showSnackBar('An error occurred, please try again');
       }
-      return false; // Sign-in failed
+      return false; // Login gagal
     }
   }
 
   void _showSnackBar(String message) {
-    if (!mounted) return; // Check if mounted
+    if (!mounted) return; // Pastikan widget masih dipasang
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(message)),
     );
@@ -124,11 +133,10 @@ class _SigninPageState extends State<SigninPage> {
 
           _logger.i('Attempting to sign in with email $email...');
 
-          // Perform sign-in and check if the widget is still mounted
           final success = await _signInWithEmail(email, password);
 
           if (mounted && success) {
-            // Ensure the widget is still mounted
+            // Navigasi ke halaman beranda admin setelah login berhasil
             AppNavigator.pushAndRemove(context, const HomePage());
           }
         } else {

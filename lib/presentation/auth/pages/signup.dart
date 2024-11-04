@@ -3,7 +3,7 @@ import 'package:pharmacyapp/common/widgets/appbar/app_bar.dart';
 import 'package:pharmacyapp/common/widgets/button/basic_app_button.dart';
 import 'package:pharmacyapp/data/auth/models/user_creation_req.dart';
 import 'package:pharmacyapp/presentation/auth/pages/gender_and_age_selection.dart';
-import 'package:pharmacyapp/presentation/auth/pages/siginin.dart';
+import 'package:pharmacyapp/presentation/auth/pages/sigininuser.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
@@ -177,7 +177,7 @@ class SignupPage extends StatelessWidget {
             text: 'Signin',
             recognizer: TapGestureRecognizer()
               ..onTap = () {
-                AppNavigator.pushReplacement(context, const SigninPage());
+                AppNavigator.pushReplacement(context, const SigninuserPage());
               },
             style: const TextStyle(fontWeight: FontWeight.bold))
       ]),
