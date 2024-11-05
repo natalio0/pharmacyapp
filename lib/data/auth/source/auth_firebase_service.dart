@@ -181,17 +181,19 @@ class AuthFirebaseServiceImpl extends AuthFirebaseService {
   }
 
   @override
-  Future<Either> getAdmin() async {
+  Future<Either<String, Map<String, dynamic>>> getAdmin() async {
     try {
-      var currentAdmin = FirebaseAuth.instance.currentUser;
-      var adminData = await FirebaseFirestore.instance
+      DocumentSnapshot doc = await FirebaseFirestore.instance
           .collection('Admins')
-          .doc(currentAdmin?.uid)
-          .get()
-          .then((value) => value.data());
-      return Right(adminData);
+          .doc('adminId')
+          .get(); // Use correct admin ID
+      if (doc.exists) {
+        return Right(doc.data() as Map<String, dynamic>);
+      } else {
+        return const Left('Admin not found');
+      }
     } catch (e) {
-      return const Left('Please try again');
+      return Left(e.toString());
     }
   }
 }

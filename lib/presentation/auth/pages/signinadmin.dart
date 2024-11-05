@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +12,18 @@ import 'package:pharmacyapp/presentation/auth/pages/signup_admin.dart';
 import 'package:pharmacyapp/presentation/home/pages/home.dart';
 
 class SigninAdminPage extends StatefulWidget {
-  const SigninAdminPage({super.key});
+  const SigninAdminPage({
+    Key? key,
+    this.firstName,
+    this.lastName,
+    this.email,
+    this.password,
+  }) : super(key: key);
+
+  final String? firstName;
+  final String? lastName;
+  final String? email;
+  final String? password;
 
   @override
   State<SigninAdminPage> createState() => _SigninAdminPageState();
@@ -22,9 +34,6 @@ class _SigninAdminPageState extends State<SigninAdminPage> {
   final TextEditingController _passwordCon = TextEditingController();
   final Logger _logger = Logger();
   final FirebaseAuth _auth = FirebaseAuth.instance;
-
-  // Tentukan daftar email admin yang diizinkan
-  final List<String> _adminEmails = ['admin@example.com'];
 
   @override
   void dispose() {
@@ -82,21 +91,32 @@ class _SigninAdminPageState extends State<SigninAdminPage> {
     );
   }
 
-  Future<bool> _signInWithEmail(String email, String password) async {
-    try {
-      // Periksa apakah email termasuk email admin
-      if (!_adminEmails.contains(email)) {
-        _showSnackBar('Unauthorized access');
-        return false;
-      }
+  Future<List<String>> _fetchAdminEmails() async {
+    final QuerySnapshot querySnapshot =
+        await FirebaseFirestore.instance.collection('Admins').get();
+    return querySnapshot.docs.map((doc) => doc['email'] as String).toList();
+  }
 
+  Future<bool> _signInWithEmail(String email, String password) async {
+    final adminEmails = await _fetchAdminEmails();
+
+    _logger.i('Attempting login with email: $email');
+
+    // Check if the email is in the authorized admin list
+    if (!adminEmails.contains(email)) {
+      _logger.w('Unauthorized access attempt with email: $email');
+      _showSnackBar('Unauthorized access');
+      return false;
+    }
+
+    try {
       await _auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
-      return true; // Login berhasil
+      return true; // Login successful
     } on FirebaseAuthException catch (e) {
-      // Tangani kesalahan login
+      // Handle login errors
       if (e.code == 'user-not-found') {
         _showSnackBar('Email not registered');
       } else if (e.code == 'wrong-password') {
@@ -104,12 +124,12 @@ class _SigninAdminPageState extends State<SigninAdminPage> {
       } else {
         _showSnackBar('An error occurred, please try again');
       }
-      return false; // Login gagal
+      return false; // Login failed
     }
   }
 
   void _showSnackBar(String message) {
-    if (!mounted) return; // Pastikan widget masih dipasang
+    if (!mounted) return; // Ensure the widget is still mounted
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(message)),
     );
@@ -136,8 +156,8 @@ class _SigninAdminPageState extends State<SigninAdminPage> {
           final success = await _signInWithEmail(email, password);
 
           if (mounted && success) {
-            // Navigasi ke halaman beranda admin setelah login berhasil
-            AppNavigator.pushAndRemove(context, const HomePage());
+            // Navigate to the admin home page after successful login
+            AppNavigator.pushAndRemove(context, const AdminDashboard());
           }
         } else {
           _showSnackBar('Please enter your email and password');
@@ -158,7 +178,7 @@ class _SigninAdminPageState extends State<SigninAdminPage> {
             text: 'Create one',
             recognizer: TapGestureRecognizer()
               ..onTap = () {
-                AppNavigator.push(context, SignupAdminPage());
+                AppNavigator.push(context, const SignupAdminPage());
               },
             style: const TextStyle(
                 fontWeight: FontWeight.bold, color: AppColors.primary),

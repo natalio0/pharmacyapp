@@ -46,11 +46,16 @@ class AuthRepositoryImpl extends AuthRepository {
   }
 
   @override
+  @override
   Future<Either> getAdmin() async {
     var admin = await sl<AuthFirebaseService>().getAdmin();
     return admin.fold((error) {
       return Left(error);
     }, (data) {
+      if (data == null) {
+        // Return an error if data is null
+        return const Left('Admin not found');
+      }
       return Right(AdminModel.fromMap(data).toEntity());
     });
   }
