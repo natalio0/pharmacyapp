@@ -9,15 +9,13 @@ class AdminModel {
   final String lastName;
   final String email;
   final String image;
-  final int gender;
 
   AdminModel(
       {required this.adminId,
       required this.firstName,
       required this.lastName,
       required this.email,
-      required this.image,
-      required this.gender});
+      required this.image});
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -26,7 +24,6 @@ class AdminModel {
       'lastName': lastName,
       'email': email,
       'image': image,
-      'gender': gender,
     };
   }
 
@@ -37,7 +34,6 @@ class AdminModel {
       lastName: map['lastName'] as String,
       email: map['email'] as String,
       image: map['image'] ?? '',
-      gender: map['gender'] as int,
     );
   }
 
@@ -54,7 +50,6 @@ extension AdminXModel on AdminModel {
         firstName: firstName,
         lastName: lastName,
         email: email,
-        image: image,
-        gender: gender);
+        image: image);
   }
 }

@@ -4,15 +4,13 @@ class AdminEntity {
   final String lastName;
   final String email;
   final String image;
-  final int gender;
 
   AdminEntity(
       {required this.adminId,
       required this.firstName,
       required this.lastName,
       required this.email,
-      required this.image,
-      required this.gender});
+      required this.image});
 
   get name => null;
 }
