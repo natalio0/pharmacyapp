@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pharmacyapp/core/configs/theme/app_theme.dart';
 import 'package:pharmacyapp/firebase_options.dart';
+import 'package:pharmacyapp/presentation/auth/admin/pages/add_product.dart';
+import 'package:pharmacyapp/presentation/auth/admin/pages/admindasboard.dart';
 import 'package:pharmacyapp/presentation/home/pages/home.dart';
 import 'package:pharmacyapp/presentation/splash/bloc/splash_cubit.dart';
 import 'package:pharmacyapp/presentation/splash/pages/splash.dart';
@@ -34,7 +36,8 @@ class MyApp extends StatelessWidget {
           '/welcome': (context) => const WelcomePage(),
           '/loginUser': (context) => const SigninuserPage(),
           '/loginAdmin': (context) => const SigninAdminPage(),
-          '/home': (context) => const HomePage()
+          '/home': (context) => const HomePage(),
+          '/admindasboard': (context ) => const AddProduct(),
         },
       ),
     );

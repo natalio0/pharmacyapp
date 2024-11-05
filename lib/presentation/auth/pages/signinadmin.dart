@@ -7,6 +7,7 @@ import 'package:pharmacyapp/common/helper/navigator/app_navigator.dart';
 import 'package:pharmacyapp/common/widgets/appbar/app_bar.dart';
 import 'package:pharmacyapp/common/widgets/button/basic_app_button.dart';
 import 'package:pharmacyapp/core/configs/theme/app_colors.dart';
+import 'package:pharmacyapp/presentation/auth/admin/pages/admindasboard.dart';
 import 'package:pharmacyapp/presentation/auth/pages/forgot_password.dart';
 import 'package:pharmacyapp/presentation/auth/pages/signup_admin.dart';
 
