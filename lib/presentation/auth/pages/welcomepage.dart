@@ -23,7 +23,8 @@ class WelcomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        color: AppColors.primary, // Mengatur latar belakang menggunakan AppColors.primary
+        color: AppColors
+            .primary, // Mengatur latar belakang menggunakan AppColors.primary
         padding: const EdgeInsets.all(20.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -53,7 +54,7 @@ class WelcomePage extends StatelessWidget {
             const SizedBox(height: 10),
             ElevatedButton(
               onPressed: () {
-                Navigator.pushNamed(context, '/admindasboard');
+                Navigator.pushNamed(context, '/loginAdmin');
               },
               style: ElevatedButton.styleFrom(
                 foregroundColor: AppColors.primary,

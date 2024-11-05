@@ -32,7 +32,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20),
-            
+
             // Bagian Statistik
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -61,7 +61,8 @@ class _AdminDashboardState extends State<AdminDashboard> {
               children: [
                 _buildMenuCard(Icons.person, "Kelola Pengguna", Colors.blue),
                 _buildMenuCard(Icons.receipt, "Kelola Pesanan", Colors.green),
-                _buildMenuCard(Icons.bar_chart, "Laporan Statistik", Colors.orange),
+                _buildMenuCard(
+                    Icons.bar_chart, "Laporan Statistik", Colors.orange),
                 _buildMenuCard(Icons.settings, "Pengaturan", Colors.grey),
               ],
             ),
@@ -88,7 +89,9 @@ class _AdminDashboardState extends State<AdminDashboard> {
             Text(
               count,
               style: const TextStyle(
-                  color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+                  color: Colors.white,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold),
             ),
           ],
         ),
@@ -112,7 +115,8 @@ class _AdminDashboardState extends State<AdminDashboard> {
               const SizedBox(height: 10),
               Text(
                 title,
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
             ],
