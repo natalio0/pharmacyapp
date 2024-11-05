@@ -6,6 +6,7 @@ import 'package:pharmacyapp/common/helper/navigator/app_navigator.dart';
 import 'package:pharmacyapp/common/widgets/appbar/app_bar.dart';
 import 'package:pharmacyapp/common/widgets/button/basic_app_button.dart';
 import 'package:pharmacyapp/core/configs/theme/app_colors.dart';
+import 'package:pharmacyapp/presentation/auth/admin/pages/admindasboard.dart';
 import 'package:pharmacyapp/presentation/auth/pages/forgot_password.dart';
 import 'package:pharmacyapp/presentation/auth/pages/signup_admin.dart';
 import 'package:pharmacyapp/presentation/home/pages/home.dart';
@@ -137,7 +138,7 @@ class _SigninAdminPageState extends State<SigninAdminPage> {
 
           if (mounted && success) {
             // Navigasi ke halaman beranda admin setelah login berhasil
-            AppNavigator.pushAndRemove(context, const HomePage());
+            AppNavigator.pushAndRemove(context, const AdminDashboard());
           }
         } else {
           _showSnackBar('Please enter your email and password');

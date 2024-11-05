@@ -53,7 +53,7 @@ class WelcomePage extends StatelessWidget {
             const SizedBox(height: 10),
             ElevatedButton(
               onPressed: () {
-                Navigator.pushNamed(context, '/loginAdmin');
+                Navigator.pushNamed(context, '/admindasboard');
               },
               style: ElevatedButton.styleFrom(
                 foregroundColor: AppColors.primary,
