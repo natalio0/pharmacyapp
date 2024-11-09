@@ -10,7 +10,6 @@ import 'package:pharmacyapp/presentation/splash/bloc/splash_cubit.dart';
 import 'package:pharmacyapp/presentation/splash/pages/splash.dart';
 import 'package:pharmacyapp/presentation/auth/pages/welcomepage.dart';
 import 'package:pharmacyapp/presentation/auth/pages/sigininuser.dart';
-import 'package:pharmacyapp/presentation/auth/pages/signinadmin.dart';
 import 'package:pharmacyapp/service_locator.dart';
 
 Future<void> main() async {

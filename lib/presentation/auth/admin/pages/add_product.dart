@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pharmacyapp/core/configs/theme/app_colors.dart';
 import 'package:pharmacyapp/core/configs/widget/support_widget.dart';
+import 'package:pharmacyapp/services/database.dart';
 import 'package:random_string/random_string.dart';
 
 class AddProduct extends StatefulWidget {
@@ -22,7 +23,7 @@ class _AddProductState extends State<AddProduct> {
   Future<void> getImage() async {
     var image = await _picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
-      selectedImage = File(image!.path);
+      selectedImage = File(image.path);
       setState(() {});
     }
   }
@@ -40,6 +41,14 @@ uploadItem() async {
       "Gambar": downloadUrl,
 
     };
+    await DatabaseMethods().addProduct(addProduct, value!).then((value) {
+      selectedImage=null;
+      namecontroller.text="";
+    // ignore: use_build_context_synchronously
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+      backgroundColor: Colors.redAccent,
+      content: Text("Produk berhasil di upload!", style: TextStyle(fontSize: 20.0),)));
+  });
   }
 }
   String? value;
@@ -49,14 +58,14 @@ uploadItem() async {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: Icon(Icons.arrow_back),
+        leading: const Icon(Icons.arrow_back),
         title: Text(
           "Add Product",
           style: AppWidget.semiboldTextFeildStyle(),
         ),
       ),
       body: Container(
-        margin: EdgeInsets.only(left: 20.0, top: 20.0, right: 20.0),
+        margin: const EdgeInsets.only(left: 20.0, top: 20.0, right: 20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -64,7 +73,7 @@ uploadItem() async {
               "Upload foto Produk",
               style: AppWidget.lightTextFieldStyle(),
             ),
-            SizedBox(
+            const SizedBox(
               height: 20.0,
             ),
             Center(
@@ -79,33 +88,33 @@ uploadItem() async {
                   ),
                   child: selectedImage != null
                       ? Image.file(selectedImage!)
-                      : Icon(Icons.camera_alt_outlined),
+                      : const Icon(Icons.camera_alt_outlined),
                 ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 20.0,
             ),
             Text(
               "Nama Produk",
               style: AppWidget.lightTextFieldStyle(),
             ),
-            SizedBox(
+            const SizedBox(
               height: 20.0,
             ),
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 20.0),
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
               width: MediaQuery.of(context).size.width,
               decoration: BoxDecoration(
-                color: Color(0xFFececf8),
+                color: const Color(0xFFececf8),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: TextField(
                 controller: namecontroller,
-                decoration: InputDecoration(border: InputBorder.none),
+                decoration: const InputDecoration(border: InputBorder.none),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 20.0,
             ),
             Text(
@@ -113,10 +122,10 @@ uploadItem() async {
               style: AppWidget.lightTextFieldStyle(),
             ),
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 10.0),
+              padding: const EdgeInsets.symmetric(horizontal: 10.0),
               width: MediaQuery.of(context).size.width,
               decoration: BoxDecoration(
-                color: Color(0xFFececf8),
+                color: const Color(0xFFececf8),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: DropdownButtonHideUnderline(
@@ -136,9 +145,9 @@ uploadItem() async {
                     this.value = value;
                   }),
                   dropdownColor: Colors.white,
-                  hint: Text("Pilih Kategori"),
+                  hint: const Text("Pilih Kategori"),
                   iconSize: 36,
-                  icon: Icon(
+                  icon: const Icon(
                     Icons.arrow_drop_down,
                     color: Colors.black,
                   ),
@@ -146,10 +155,12 @@ uploadItem() async {
                 ),
               ),
             ),
-            SizedBox(height: 30.0),
+            const SizedBox(height: 30.0),
             Center(
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  uploadItem();
+                },
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.white,
                   backgroundColor: AppColors.primary,
