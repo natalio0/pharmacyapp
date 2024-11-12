@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:pharmacyapp/presentation/auth/admin/pages/add_product.dart';
+import 'package:pharmacyapp/presentation/auth/admin/pages/place_order.dart';
 
 class AdminDashboard extends StatefulWidget {
   const AdminDashboard({super.key});
@@ -12,12 +14,11 @@ class _AdminDashboardState extends State<AdminDashboard> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Admin Dashboard"),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () {
-              // Tambahkan logika logout di sini
+              // Add logout logic here
             },
           ),
         ],
@@ -59,11 +60,14 @@ class _AdminDashboardState extends State<AdminDashboard> {
                 mainAxisSpacing: 16,
               ),
               children: [
-                _buildMenuCard(Icons.person, "Kelola Pengguna", Colors.blue),
-                _buildMenuCard(Icons.receipt, "Kelola Pesanan", Colors.green),
                 _buildMenuCard(
-                    Icons.bar_chart, "Laporan Statistik", Colors.orange),
-                _buildMenuCard(Icons.settings, "Pengaturan", Colors.grey),
+                    Icons.person, "Users", Colors.blue, const UsersPage()),
+                _buildMenuCard(
+                    Icons.receipt, "Orders", Colors.green, const OrdersPage()),
+                _buildMenuCard(Icons.bar_chart, "Products", Colors.orange,
+                    const AddProduct()),
+                _buildMenuCard(Icons.settings, "Pengaturan", Colors.grey,
+                    const SettingsPage()),
               ],
             ),
           ],
@@ -99,12 +103,16 @@ class _AdminDashboardState extends State<AdminDashboard> {
     );
   }
 
-  Widget _buildMenuCard(IconData icon, String title, Color color) {
+  Widget _buildMenuCard(IconData icon, String title, Color color, Widget page) {
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       child: InkWell(
         onTap: () {
-          // Tambahkan aksi navigasi sesuai menu di sini
+          // Navigate to the respective page
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => page),
+          );
         },
         child: Padding(
           padding: const EdgeInsets.all(16.0),

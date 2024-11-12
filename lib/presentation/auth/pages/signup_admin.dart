@@ -130,9 +130,12 @@ class SignupAdminPageState extends State<SignupAdminPage> {
                 .collection('Admins')
                 .doc(adminId) // Use adminId as the document ID
                 .set({
+              'adminId': adminId, // Store the adminId explicitly
               'firstName': _firstNameCon.text,
               'lastName': _lastNameCon.text,
               'email': _emailCon.text,
+              'createdAt':
+                  FieldValue.serverTimestamp(), // Timestamp for admin creation
             });
 
             // Navigate to SigninAdminPage on successful registration
@@ -156,7 +159,7 @@ class SignupAdminPageState extends State<SignupAdminPage> {
     );
   }
 
-// Helper method to show a snackbar message
+  // Helper method to show a snackbar message
   void _showMessage(String message) {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -165,7 +168,7 @@ class SignupAdminPageState extends State<SignupAdminPage> {
     }
   }
 
-// Helper method to navigate to SigninAdminPage
+  // Helper method to navigate to SigninAdminPage
   void _navigateToSignin() {
     if (mounted) {
       AppNavigator.push(context, const SigninAdminPage());

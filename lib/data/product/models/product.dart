@@ -3,10 +3,8 @@ import 'package:pharmacyapp/domain/product/entities/product.dart';
 
 class ProductModel {
   final String categoryId;
-  // final List<ProductColorModel> colors;
   final Timestamp createdDate;
   final num discountedPrice;
-  final int gender;
   final List<String> images;
   final num price;
   final String productId;
@@ -19,7 +17,6 @@ class ProductModel {
       // required this.colors,
       required this.createdDate,
       required this.discountedPrice,
-      required this.gender,
       required this.images,
       required this.price,
       required this.productId,
@@ -30,11 +27,8 @@ class ProductModel {
   factory ProductModel.fromMap(Map<String, dynamic> map) {
     return ProductModel(
       categoryId: map['categoryId'] as String,
-      // colors: List<ProductColorModel>.from(
-      //     map['colors'].map((e) => ProductColorModel.fromMap(e))),
       createdDate: map['createdDate'] as Timestamp,
       discountedPrice: map['discountedPrice'] as num,
-      gender: map['gender'] as int,
       images: List<String>.from(
         map['images'].map((e) => e.toString()),
       ),
@@ -49,10 +43,8 @@ class ProductModel {
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'categoryId': categoryId,
-      // 'colors': colors.map((e) => e.toMap()).toList(),
       'createdDate': createdDate,
       'discountedPrice': discountedPrice,
-      'gender': gender,
       'images': images.map((e) => e.toString()).toList(),
       'price': price,
       'productId': productId,
@@ -69,7 +61,6 @@ extension ProductXModel on ProductModel {
         categoryId: categoryId,
         createdDate: createdDate,
         discountedPrice: discountedPrice,
-        gender: gender,
         images: images,
         price: price,
         productId: productId,
@@ -86,7 +77,6 @@ extension ProductXEntity on ProductEntity {
         // colors: colors.map((e) => e.fromEntity()).toList(),
         createdDate: createdDate,
         discountedPrice: discountedPrice,
-        gender: gender,
         images: images,
         price: price,
         productId: productId,

@@ -1,12 +1,11 @@
 import 'dart:io';
-
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pharmacyapp/core/configs/theme/app_colors.dart';
 import 'package:pharmacyapp/core/configs/widget/support_widget.dart';
-import 'package:pharmacyapp/services/database.dart';
 import 'package:random_string/random_string.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AddProduct extends StatefulWidget {
   const AddProduct({super.key});
@@ -18,49 +17,91 @@ class AddProduct extends StatefulWidget {
 class _AddProductState extends State<AddProduct> {
   final ImagePicker _picker = ImagePicker();
   File? selectedImage;
-  TextEditingController namecontroller = TextEditingController();
-  TextEditingController pricecontroller = TextEditingController();
-  TextEditingController detailcontroller = TextEditingController();
+  TextEditingController nameController = TextEditingController();
+  TextEditingController priceController = TextEditingController();
+  TextEditingController detailController = TextEditingController();
+  TextEditingController discountedPriceController = TextEditingController();
+  TextEditingController salesNumberController = TextEditingController();
+
+  String? selectedCategory;
+  final List<String> categoryItems = ['Alat Kesehatan', 'Vitamin', 'Herbal'];
 
   Future<void> getImage() async {
     var image = await _picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
-      selectedImage = File(image.path);
-      setState(() {});
-    }
-  }
-
-  uploadItem() async {
-    if (selectedImage != null && namecontroller.text != "") {
-      String addId = randomAlphaNumeric(10);
-      Reference firebaseStorageRef =
-          FirebaseStorage.instance.ref().child("blogImage").child(addId);
-
-      final UploadTask task = firebaseStorageRef.putFile(selectedImage!);
-      var downloadUrl = await (await task).ref.getDownloadURL();
-
-      Map<String, dynamic> addProduct = {
-        "Nama": namecontroller.text,
-        "Gambar": downloadUrl,
-        "Harga": pricecontroller,
-        "Detail": detailcontroller,
-      };
-      await DatabaseMethods().addProduct(addProduct, value!).then((value) {
-        selectedImage = null;
-        namecontroller.text = "";
-        // ignore: use_build_context_synchronously
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            backgroundColor: AppColors.primary,
-            content: Text(
-              "Produk berhasil di upload!",
-              style: TextStyle(fontSize: 20.0),
-            )));
+      setState(() {
+        selectedImage = File(image.path);
       });
     }
   }
 
-  String? value;
-  final List<String> categoryitem = ['Alat Kesehatan', 'Vitamin', 'Herbal'];
+  Future<void> uploadItem() async {
+    if (selectedImage != null && nameController.text.isNotEmpty) {
+      String productId = randomAlphaNumeric(10);
+
+      // Use the specified path for product images
+      Reference storageRef = FirebaseStorage.instance
+          .ref()
+          .child("Products/Images")
+          .child("$productId.jpg");
+
+      final UploadTask task = storageRef.putFile(selectedImage!);
+      String downloadUrl = await (await task).ref.getDownloadURL();
+
+      // Prepare product data map for Firestore
+      Map<String, dynamic> productData = {
+        "categoryId": selectedCategory,
+        "createdDate": FieldValue.serverTimestamp(),
+        "discountedPrice": num.tryParse(discountedPriceController.text) ?? 0,
+        "images": [downloadUrl],
+        "price": num.tryParse(priceController.text) ?? 0,
+        "productId": productId,
+        "descriptions": detailController.text,
+        "salesNumber": int.tryParse(salesNumberController.text) ?? 0,
+        "title": nameController.text,
+      };
+
+      // Save to the 'Products' collection directly
+      await FirebaseFirestore.instance
+          .collection('Products')
+          .doc(productId)
+          .set(productData)
+          .then((_) {
+        clearForm();
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          backgroundColor: AppColors.primary,
+          content: Text(
+            "Produk berhasil di-upload!",
+            style: TextStyle(fontSize: 20.0),
+          ),
+        ));
+      }).catchError((error) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          backgroundColor: Colors.red,
+          content: Text(
+            "Upload gagal: $error",
+            style: const TextStyle(fontSize: 18.0),
+          ),
+        ));
+      });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("Pilih gambar dan masukkan nama produk!"),
+      ));
+    }
+  }
+
+  void clearForm() {
+    selectedImage = null;
+    nameController.clear();
+    priceController.clear();
+    detailController.clear();
+    discountedPriceController.clear();
+    salesNumberController.clear();
+    setState(() {
+      selectedCategory = null;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -74,42 +115,27 @@ class _AddProductState extends State<AddProduct> {
       ),
       body: SingleChildScrollView(
         child: Container(
-          margin: const EdgeInsets.only(left: 20.0, top: 20.0, right: 20.0, bottom: 20.0),
+          margin: const EdgeInsets.all(20.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                "Upload foto Produk",
-                style: AppWidget.lightTextFieldStyle(),
-              ),
-              const SizedBox(
-                height: 20.0,
-              ),
-              selectedImage == null
-                  ? GestureDetector(
-                      onTap: () {
-                        getImage();
-                      },
-                      child: Center(
-                        child: GestureDetector(
-                          onTap: getImage,
-                          child: Container(
-                            height: 150,
-                            width: 150,
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.black, width: 1.5),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Icon(Icons.camera_alt_outlined),
+              Text("Upload foto Produk",
+                  style: AppWidget.lightTextFieldStyle()),
+              const SizedBox(height: 20.0),
+              GestureDetector(
+                onTap: getImage,
+                child: Center(
+                  child: selectedImage == null
+                      ? Container(
+                          height: 150,
+                          width: 150,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.black, width: 1.5),
+                            borderRadius: BorderRadius.circular(20),
                           ),
-                        ),
-                      ),
-                    )
-                  : Center(
-                    child: Material(
-                        elevation: 4.0,
-                        borderRadius: BorderRadius.circular(20),
-                        child: Container(
+                          child: const Icon(Icons.camera_alt_outlined),
+                        )
+                      : Container(
                           height: 150,
                           width: 150,
                           decoration: BoxDecoration(
@@ -118,127 +144,24 @@ class _AddProductState extends State<AddProduct> {
                           ),
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(20),
-                              child: Image.file(
-                            selectedImage!,
-                            fit: BoxFit.cover,
-                          )),
-                        ),
-                      ),
-                  ),
-              const SizedBox(
-                height: 20.0,
-              ),
-              Text(
-                "Nama Produk",
-                style: AppWidget.lightTextFieldStyle(),
-              ),
-              const SizedBox(
-                height: 20.0,
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                width: MediaQuery.of(context).size.width,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFececf8),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: TextField(
-                  controller: namecontroller,
-                  decoration: const InputDecoration(border: InputBorder.none),
-                ),
-              ),
-              const SizedBox(
-                height: 20.0,
-              ),
-              Text(
-                "Harga Produk",
-                style: AppWidget.lightTextFieldStyle(),
-              ),
-              const SizedBox(
-                height: 20.0,
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                width: MediaQuery.of(context).size.width,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFececf8),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: TextField(
-                  controller: pricecontroller,
-                  decoration: const InputDecoration(border: InputBorder.none),
-                ),
-              ),
-              const SizedBox(
-                height: 20.0,
-              ),
-              Text(
-                "Detail Produk",
-                style: AppWidget.lightTextFieldStyle(),
-              ),
-              const SizedBox(
-                height: 20.0,
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                width: MediaQuery.of(context).size.width,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFececf8),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: TextField(
-                  maxLines: 6,
-                  controller: detailcontroller,
-                  decoration: const InputDecoration(border: InputBorder.none),
-                ),
-              ),
-              const SizedBox(
-                height: 20.0,
-              ),
-              Text(
-                "Produk Kategori",
-                style: AppWidget.lightTextFieldStyle(),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                width: MediaQuery.of(context).size.width,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFececf8),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<String>(
-                    items: categoryitem
-                        .map(
-                          (item) => DropdownMenuItem(
-                            value: item,
-                            child: Text(
-                              item,
-                              style: AppWidget.semiboldTextFeildStyle(),
-                            ),
+                            child:
+                                Image.file(selectedImage!, fit: BoxFit.cover),
                           ),
-                        )
-                        .toList(),
-                    onChanged: (value) => setState(() {
-                      this.value = value;
-                    }),
-                    dropdownColor: Colors.white,
-                    hint: const Text("Pilih Kategori"),
-                    iconSize: 36,
-                    icon: const Icon(
-                      Icons.arrow_drop_down,
-                      color: Colors.black,
-                    ),
-                    value: value,
-                  ),
+                        ),
                 ),
               ),
+              const SizedBox(height: 20.0),
+              buildTextField("Nama Produk", nameController),
+              buildTextField("Harga Produk", priceController),
+              buildTextField("Detail Produk", detailController, maxLines: 6),
+              buildTextField("Harga Diskon", discountedPriceController),
+              buildTextField("Jumlah Penjualan", salesNumberController),
+              Text("Produk Kategori", style: AppWidget.lightTextFieldStyle()),
+              buildDropdown(),
               const SizedBox(height: 30.0),
               Center(
                 child: ElevatedButton(
-                  onPressed: () {
-                    uploadItem();
-                  },
+                  onPressed: uploadItem,
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.white,
                     backgroundColor: AppColors.primary,
@@ -251,6 +174,64 @@ class _AddProductState extends State<AddProduct> {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildTextField(String label, TextEditingController controller,
+      {int maxLines = 1}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: AppWidget.lightTextFieldStyle()),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+          width: MediaQuery.of(context).size.width,
+          decoration: BoxDecoration(
+            color: const Color(0xFFececf8),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: TextField(
+            controller: controller,
+            maxLines: maxLines,
+            decoration: const InputDecoration(border: InputBorder.none),
+          ),
+        ),
+        const SizedBox(height: 20.0),
+      ],
+    );
+  }
+
+  Widget buildDropdown() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+      width: MediaQuery.of(context).size.width,
+      decoration: BoxDecoration(
+        color: const Color(0xFFececf8),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<String>(
+          items: categoryItems
+              .map(
+                (item) => DropdownMenuItem(
+                  value: item,
+                  child: Text(
+                    item,
+                    style: AppWidget.semiboldTextFeildStyle(),
+                  ),
+                ),
+              )
+              .toList(),
+          onChanged: (value) => setState(() {
+            selectedCategory = value;
+          }),
+          dropdownColor: Colors.white,
+          hint: const Text("Pilih Kategori"),
+          iconSize: 36,
+          icon: const Icon(Icons.arrow_drop_down, color: Colors.black),
+          value: selectedCategory,
         ),
       ),
     );

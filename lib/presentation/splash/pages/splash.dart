@@ -27,7 +27,7 @@ class SplashPageState extends State<SplashPage> {
       listener: (context, state) {
         if (state is Authenticated) {
           // Jika pengguna terautentikasi, arahkan ke HomePage
-          Navigator.pushReplacementNamed(context, '/home');
+          Navigator.pushReplacementNamed(context, '/welcome');
         } else if (state is UnAuthenticated) {
           // Jika pengguna tidak terautentikasi, arahkan ke WelcomePage
           Navigator.pushReplacementNamed(context, '/welcome');
