@@ -46,7 +46,6 @@ class AuthRepositoryImpl extends AuthRepository {
   }
 
   @override
-  @override
   Future<Either> getAdmin() async {
     var admin = await sl<AuthFirebaseService>().getAdmin();
     return admin.fold((error) {

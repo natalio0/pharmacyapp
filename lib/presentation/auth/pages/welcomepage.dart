@@ -36,7 +36,7 @@ class WelcomePage extends StatelessWidget {
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: Colors.black, // Warna teks judul
+                color: Colors.white, // Warna teks judul
               ),
               textAlign: TextAlign.center,
             ),
@@ -49,7 +49,10 @@ class WelcomePage extends StatelessWidget {
                 foregroundColor: AppColors.primary,
                 backgroundColor: Colors.white, // Warna teks tombol
               ),
-              child: const Text('Login as User'),
+              child: const Text(
+                'Login as User',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
             ),
             const SizedBox(height: 10),
             ElevatedButton(
@@ -60,7 +63,10 @@ class WelcomePage extends StatelessWidget {
                 foregroundColor: AppColors.primary,
                 backgroundColor: Colors.white, // Warna teks tombol
               ),
-              child: const Text('Login as Admin'),
+              child: const Text(
+                'Login as Admin',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
             ),
           ],
         ),

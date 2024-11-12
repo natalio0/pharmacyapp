@@ -18,7 +18,7 @@ class SplashPageState extends State<SplashPage> {
   void initState() {
     super.initState();
     // Panggil appStarted di sini dengan argumen context
-    context.read<SplashCubit>().appStarted(context); 
+    context.read<SplashCubit>().appStarted(context);
   }
 
   @override
@@ -27,7 +27,7 @@ class SplashPageState extends State<SplashPage> {
       listener: (context, state) {
         if (state is Authenticated) {
           // Jika pengguna terautentikasi, arahkan ke HomePage
-          Navigator.pushReplacementNamed(context, '/welcome');
+          Navigator.pushReplacementNamed(context, '/home');
         } else if (state is UnAuthenticated) {
           // Jika pengguna tidak terautentikasi, arahkan ke WelcomePage
           Navigator.pushReplacementNamed(context, '/welcome');

@@ -1,12 +1,11 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pharmacyapp/common/helper/navigator/app_navigator.dart';
-import 'package:pharmacyapp/core/configs/assets/app_images.dart';
 import 'package:pharmacyapp/core/configs/assets/app_vectors.dart';
 import 'package:pharmacyapp/core/configs/theme/app_colors.dart';
 import 'package:pharmacyapp/domain/auth/entity/user.dart';
 import 'package:pharmacyapp/presentation/cart/pages/cart.dart';
 import 'package:pharmacyapp/presentation/home/bloc/user_info_display_cubit.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:pharmacyapp/presentation/settings/pages/settings.dart';
 
@@ -32,7 +31,7 @@ class Header extends StatelessWidget {
                 children: [
                   _profileImage(state.user, context),
                   _welcomeMessage(state.user),
-                  _card(context)
+                  _card(context),
                 ],
               );
             }
@@ -43,25 +42,63 @@ class Header extends StatelessWidget {
     );
   }
 
+  // Function to generate the profile image URL
+  String generateUserImageURL(String imagePath) {
+    // Assuming that `AppUrl.userImage` is the base URL for Firebase Storage
+    return 'https://firebasestorage.googleapis.com/v0/b/pharmacyapp-0101-dev.appspot.com/o/Users%2FImages%2F$imagePath?alt=media';
+  }
+
+  // Widget to display the profile image
   Widget _profileImage(UserEntity user, BuildContext context) {
     return GestureDetector(
       onTap: () {
         AppNavigator.push(context, const SettingsPage());
       },
-      child: Container(
-        height: 40,
-        width: 40,
-        decoration: BoxDecoration(
-            image: DecorationImage(
-                image: user.image.isEmpty
-                    ? const AssetImage(AppImages.profile)
-                    : NetworkImage(user.image)),
-            color: Colors.red,
-            shape: BoxShape.circle),
+      child: FutureBuilder<String>(
+        future: Future.delayed(
+            const Duration(seconds: 1),
+            () =>
+                generateUserImageURL(user.image)), // Simulating async operation
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const CircularProgressIndicator(); // Display a loading indicator while waiting
+          }
+          if (snapshot.hasError || !snapshot.hasData) {
+            return const CircleAvatar(
+              radius: 30, // Reduced radius for smaller size
+              backgroundImage: NetworkImage(
+                  'https://via.placeholder.com/150'), // Fallback image if an error occurs
+            );
+          }
+          return CircleAvatar(
+            radius: 30, // Reduced radius for smaller size
+            backgroundImage:
+                NetworkImage(snapshot.data!), // Use the fetched image URL
+          );
+        },
       ),
     );
   }
 
+  // Widget to display the welcome message
+  Widget _welcomeMessage(UserEntity user) {
+    return Container(
+      height: 40,
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      decoration: BoxDecoration(
+        color: AppColors.secondBackground,
+        borderRadius: BorderRadius.circular(100),
+      ),
+      child: Center(
+        child: Text(
+          'Hi, ${user.firstName}', // Displaying the user's first name
+          style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+        ),
+      ),
+    );
+  }
+
+  // Widget to display the cart icon
   Widget _card(BuildContext context) {
     return GestureDetector(
       onTap: () {
@@ -71,29 +108,14 @@ class Header extends StatelessWidget {
         height: 40,
         width: 40,
         decoration: const BoxDecoration(
-            color: AppColors.primary, shape: BoxShape.circle),
+          color: AppColors.primary, // Cart button color
+          shape: BoxShape.circle,
+        ),
         child: SvgPicture.asset(
-          AppVectors.bag,
+          AppVectors.bag, // Cart icon
           fit: BoxFit.none,
         ),
       ),
     );
   }
-}
-
-Widget _welcomeMessage(UserEntity user) {
-  return Container(
-    height: 40,
-    padding: const EdgeInsets.symmetric(horizontal: 16),
-    decoration: BoxDecoration(
-      color: AppColors.secondBackground,
-      borderRadius: BorderRadius.circular(100),
-    ),
-    child: Center(
-      child: Text(
-        'Hi, ${user.firstName}', // Ganti 'name' sesuai dengan properti yang ada
-        style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
-      ),
-    ),
-  );
 }
