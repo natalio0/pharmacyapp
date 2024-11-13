@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pharmacyapp/core/configs/theme/app_colors.dart';
@@ -39,21 +38,12 @@ class _AddProductState extends State<AddProduct> {
     if (selectedImage != null && nameController.text.isNotEmpty) {
       String productId = randomAlphaNumeric(10);
 
-      // Use the specified path for product images
-      Reference storageRef = FirebaseStorage.instance
-          .ref()
-          .child("Products/Images")
-          .child("$productId.jpg");
-
-      final UploadTask task = storageRef.putFile(selectedImage!);
-      String downloadUrl = await (await task).ref.getDownloadURL();
-
       // Prepare product data map for Firestore
       Map<String, dynamic> productData = {
         "categoryId": selectedCategory,
         "createdDate": FieldValue.serverTimestamp(),
         "discountedPrice": num.tryParse(discountedPriceController.text) ?? 0,
-        "images": [downloadUrl],
+        "images": "Products/Images/$productId.jpg",
         "price": num.tryParse(priceController.text) ?? 0,
         "productId": productId,
         "descriptions": detailController.text,
