@@ -14,7 +14,6 @@ class ProductModel {
 
   ProductModel(
       {required this.categoryId,
-      // required this.colors,
       required this.createdDate,
       required this.discountedPrice,
       required this.images,

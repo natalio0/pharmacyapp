@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pharmacyapp/core/configs/theme/app_colors.dart';
 import 'package:pharmacyapp/core/configs/widget/support_widget.dart';
+import 'package:pharmacyapp/presentation/auth/admin/pages/admindasboard.dart';
 import 'package:random_string/random_string.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -97,9 +98,18 @@ class _AddProductState extends State<AddProduct> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: const Icon(Icons.arrow_back),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+        onPressed: (){
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context)=> AdminDashboard()),
+            (Route<dynamic> route) => false,
+          );
+        },
+      ),
         title: Text(
-          "Add Product",
+          "Tambah Produk",
           style: AppWidget.semiboldTextFeildStyle(),
         ),
       ),
@@ -157,7 +167,7 @@ class _AddProductState extends State<AddProduct> {
                     backgroundColor: AppColors.primary,
                   ),
                   child: const Text(
-                    "Tambah Produk",
+                    "Tambah",
                     style: TextStyle(fontSize: 22.0),
                   ),
                 ),

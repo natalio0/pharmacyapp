@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart'; // Tambahkan dependensi Firebase Firestore
+import 'package:pharmacyapp/presentation/auth/admin/pages/UsersPage.dart';
 import 'package:pharmacyapp/presentation/auth/admin/pages/add_product.dart';
 import 'package:pharmacyapp/presentation/auth/admin/pages/place_order.dart';
+import 'package:pharmacyapp/presentation/auth/pages/welcomepage.dart';
 
 class AdminDashboard extends StatefulWidget {
   const AdminDashboard({super.key});
@@ -10,6 +13,26 @@ class AdminDashboard extends StatefulWidget {
 }
 
 class _AdminDashboardState extends State<AdminDashboard> {
+  int totalUsers = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchTotalUsers();
+  }
+
+  Future<void> _fetchTotalUsers() async {
+    try {
+      // Ambil data dari koleksi 'users' di Firestore
+      final querySnapshot = await FirebaseFirestore.instance.collection('users').get();
+      setState(() {
+        totalUsers = querySnapshot.docs.length; // Hitung jumlah dokumen
+      });
+    } catch (e) {
+      print("Error fetching total users: $e");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,7 +41,11 @@ class _AdminDashboardState extends State<AdminDashboard> {
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () {
-              // Add logout logic here
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => const WelcomePage()),
+                (Route<dynamic> route) => false,
+              );
             },
           ),
         ],
@@ -38,9 +65,9 @@ class _AdminDashboardState extends State<AdminDashboard> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildStatCard("Pengguna", "1,500", Colors.blue),
+                _buildStatCard("Total Pengguna", totalUsers.toString(), Colors.blue),
                 _buildStatCard("Pesanan", "350", Colors.green),
-                _buildStatCard("Laporan", "45", Colors.red),
+                _buildStatCard("Produk", "45", Colors.red),
               ],
             ),
             const SizedBox(height: 20),
@@ -61,10 +88,10 @@ class _AdminDashboardState extends State<AdminDashboard> {
               ),
               children: [
                 _buildMenuCard(
-                    Icons.person, "Users", Colors.blue, const UsersPage()),
+                    Icons.person, "Pengguna", Colors.blue, const UsersPage()),
                 _buildMenuCard(
-                    Icons.receipt, "Orders", Colors.green, const OrdersPage()),
-                _buildMenuCard(Icons.bar_chart, "Products", Colors.orange,
+                    Icons.receipt, "Pesanan", Colors.green, const OrdersPage()),
+                _buildMenuCard(Icons.bar_chart, "Tambah Produk", Colors.orange,
                     const AddProduct()),
                 _buildMenuCard(Icons.settings, "Pengaturan", Colors.grey,
                     const SettingsPage()),
