@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:pharmacyapp/common/helper/navigator/app_navigator.dart';
 import 'package:pharmacyapp/domain/product/entities/product.dart';
 import 'package:pharmacyapp/presentation/product_detail/pages/product_detail.dart';
@@ -12,6 +14,7 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    log(productEntity.images[0]);
     return GestureDetector(
       onTap: () {
         AppNavigator.push(

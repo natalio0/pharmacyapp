@@ -2,7 +2,6 @@ import 'package:pharmacyapp/common/widgets/appbar/app_bar.dart';
 import 'package:pharmacyapp/domain/product/usecases/get_favorties_products.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../../../common/bloc/product/products_display_cubit.dart';
 import '../../../common/bloc/product/products_display_state.dart';
 import '../../../common/widgets/product/product_card.dart';
@@ -46,19 +45,17 @@ class MyFavoritesPage extends StatelessWidget {
   }
 
   Widget _products(List<ProductEntity> products) {
-    return Expanded(
-      child: GridView.builder(
-        itemCount: products.length,
-        padding: const EdgeInsets.all(16),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            crossAxisSpacing: 10,
-            mainAxisSpacing: 10,
-            childAspectRatio: 0.6),
-        itemBuilder: (BuildContext context, int index) {
-          return ProductCard(productEntity: products[index]);
-        },
-      ),
+    return GridView.builder(
+      itemCount: products.length,
+      padding: const EdgeInsets.all(16),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: 10,
+          mainAxisSpacing: 10,
+          childAspectRatio: 0.6),
+      itemBuilder: (BuildContext context, int index) {
+        return ProductCard(productEntity: products[index]);
+      },
     );
   }
 }
