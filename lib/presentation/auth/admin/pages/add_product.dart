@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously, prefer_const_constructors
+import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -39,25 +41,35 @@ class _AddProductState extends State<AddProduct> {
     if (selectedImage != null && nameController.text.isNotEmpty) {
       String productId = randomAlphaNumeric(10);
 
-      // Prepare product data map for Firestore
-      Map<String, dynamic> productData = {
-        "categoryId": selectedCategory,
-        "createdDate": FieldValue.serverTimestamp(),
-        "discountedPrice": num.tryParse(discountedPriceController.text) ?? 0,
-        "images": "Products/Images/$productId.jpg",
-        "price": num.tryParse(priceController.text) ?? 0,
-        "productId": productId,
-        "descriptions": detailController.text,
-        "salesNumber": int.tryParse(salesNumberController.text) ?? 0,
-        "title": nameController.text,
-      };
+      try {
+        // Upload the selected image to Firebase Storage
+        String imagePath = "Products/Images/$productId.jpg";
+        UploadTask uploadTask =
+            FirebaseStorage.instance.ref(imagePath).putFile(selectedImage!);
 
-      // Save to the 'Products' collection directly
-      await FirebaseFirestore.instance
-          .collection('Products')
-          .doc(productId)
-          .set(productData)
-          .then((_) {
+        // Wait for the upload to complete
+        TaskSnapshot snapshot = await uploadTask;
+        await snapshot.ref.getDownloadURL();
+
+        // Prepare product data map for Firestore
+        Map<String, dynamic> productData = {
+          "categoryId": selectedCategory,
+          "createdDate": FieldValue.serverTimestamp(),
+          "discountedPrice": num.tryParse(discountedPriceController.text) ?? 0,
+          "images": ['$productId.jpg'], // Use the public image URL
+          "price": num.tryParse(priceController.text) ?? 0,
+          "productId": productId,
+          "descriptions": detailController.text,
+          "salesNumber": int.tryParse(salesNumberController.text) ?? 0,
+          "title": nameController.text,
+        };
+
+        // Save product data to Firestore
+        await FirebaseFirestore.instance
+            .collection('Products')
+            .doc(productId)
+            .set(productData);
+
         clearForm();
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           backgroundColor: AppColors.primary,
@@ -66,7 +78,7 @@ class _AddProductState extends State<AddProduct> {
             style: TextStyle(fontSize: 20.0),
           ),
         ));
-      }).catchError((error) {
+      } catch (error) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           backgroundColor: Colors.red,
           content: Text(
@@ -74,7 +86,7 @@ class _AddProductState extends State<AddProduct> {
             style: const TextStyle(fontSize: 18.0),
           ),
         ));
-      });
+      }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text("Pilih gambar dan masukkan nama produk!"),
@@ -100,14 +112,14 @@ class _AddProductState extends State<AddProduct> {
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-        onPressed: (){
-          Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (context)=> AdminDashboard()),
-            (Route<dynamic> route) => false,
-          );
-        },
-      ),
+          onPressed: () {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => AdminDashboard()),
+              (Route<dynamic> route) => false,
+            );
+          },
+        ),
         title: Text(
           "Tambah Produk",
           style: AppWidget.semiboldTextFeildStyle(),

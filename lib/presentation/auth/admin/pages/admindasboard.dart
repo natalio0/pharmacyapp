@@ -1,6 +1,9 @@
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart'; // Tambahkan dependensi Firebase Firestore
-import 'package:pharmacyapp/presentation/auth/admin/pages/UsersPage.dart';
+import 'package:pharmacyapp/presentation/auth/admin/pages/product_page.dart';
+import 'package:pharmacyapp/presentation/auth/admin/pages/settings_page.dart';
+import 'package:pharmacyapp/presentation/auth/admin/pages/users_page.dart';
 import 'package:pharmacyapp/presentation/auth/admin/pages/add_product.dart';
 import 'package:pharmacyapp/presentation/auth/admin/pages/place_order.dart';
 import 'package:pharmacyapp/presentation/auth/pages/welcomepage.dart';
@@ -14,22 +17,60 @@ class AdminDashboard extends StatefulWidget {
 
 class _AdminDashboardState extends State<AdminDashboard> {
   int totalUsers = 0;
+  int totalProducts = 0;
+  int totalOrders = 0;
 
   @override
   void initState() {
     super.initState();
-    _fetchTotalUsers();
+    _fetchData();
+  }
+
+  Future<void> _fetchData() async {
+    await _fetchTotalUsers();
+    await _fetchTotalOrders();
+    await _fetchTotalProducts();
   }
 
   Future<void> _fetchTotalUsers() async {
     try {
       // Ambil data dari koleksi 'users' di Firestore
-      final querySnapshot = await FirebaseFirestore.instance.collection('users').get();
+      final querySnapshot =
+          await FirebaseFirestore.instance.collection('Users').get();
       setState(() {
+        log(querySnapshot.docs.length.toString());
         totalUsers = querySnapshot.docs.length; // Hitung jumlah dokumen
       });
     } catch (e) {
-      print("Error fetching total users: $e");
+      log("Error fetching total users: $e");
+    }
+  }
+
+  Future<void> _fetchTotalOrders() async {
+    try {
+      final querySnapshot =
+          await FirebaseFirestore.instance.collectionGroup('Orders').get();
+
+      setState(() {
+        log(querySnapshot.docs.length.toString());
+        totalOrders = querySnapshot.docs.length; // Hanya mengubah `totalOrders`
+      });
+    } catch (e) {
+      log("Error fetching total orders: $e");
+    }
+  }
+
+  Future<void> _fetchTotalProducts() async {
+    try {
+      // Ambil data dari koleksi 'users' di Firestore
+      final querySnapshot =
+          await FirebaseFirestore.instance.collection('Products').get();
+      setState(() {
+        log(querySnapshot.docs.length.toString());
+        totalProducts = querySnapshot.docs.length; // Hitung jumlah dokumen
+      });
+    } catch (e) {
+      log("Error fetching total products: $e");
     }
   }
 
@@ -60,14 +101,27 @@ class _AdminDashboardState extends State<AdminDashboard> {
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20),
+            // Row(
+            //   children: [
+            //     _buildStatCard(
+            //         "Total Pengguna", totalUsers.toString(), Colors.blue),
+            //     _buildStatCard("Pesanan", "350", Colors.green),
+            //     _buildStatCard("Produk", "45", Colors.red),
+            //   ],
+            // ),
 
             // Bagian Statistik
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+            const Text(
+              "Statistik",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            GridView.count(
+              shrinkWrap: true,
+              crossAxisCount: 3,
               children: [
-                _buildStatCard("Total Pengguna", totalUsers.toString(), Colors.blue),
-                _buildStatCard("Pesanan", "350", Colors.green),
-                _buildStatCard("Produk", "45", Colors.red),
+                _buildStatCard("Pengguna", totalUsers.toString(), Colors.blue),
+                _buildStatCard("Pesanan", totalOrders.toString(), Colors.green),
+                _buildStatCard("Produk", totalProducts.toString(), Colors.red),
               ],
             ),
             const SizedBox(height: 20),
@@ -88,13 +142,35 @@ class _AdminDashboardState extends State<AdminDashboard> {
               ),
               children: [
                 _buildMenuCard(
-                    Icons.person, "Pengguna", Colors.blue, const UsersPage()),
+                  Icons.person,
+                  "Pengguna",
+                  Colors.blue,
+                  const UsersPage(),
+                ),
                 _buildMenuCard(
-                    Icons.receipt, "Pesanan", Colors.green, const OrdersPage()),
-                _buildMenuCard(Icons.bar_chart, "Tambah Produk", Colors.orange,
-                    const AddProduct()),
-                _buildMenuCard(Icons.settings, "Pengaturan", Colors.grey,
-                    const SettingsPage()),
+                  Icons.receipt,
+                  "Pesanan",
+                  Colors.green,
+                  const OrdersPage(),
+                ),
+                _buildMenuCard(
+                  Icons.shopping_bag_rounded,
+                  "Semua Produk",
+                  Colors.purple,
+                  const ProductsPage(),
+                ),
+                _buildMenuCard(
+                  Icons.bar_chart,
+                  "Tambah Produk",
+                  Colors.orange,
+                  const AddProduct(),
+                ),
+                _buildMenuCard(
+                  Icons.settings,
+                  "Pengaturan",
+                  Colors.grey,
+                  const SettingsPage(),
+                ),
               ],
             ),
           ],
