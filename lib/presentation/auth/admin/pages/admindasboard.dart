@@ -2,7 +2,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart'; // Tambahkan dependensi Firebase Firestore
 import 'package:pharmacyapp/presentation/auth/admin/pages/product_page.dart';
-import 'package:pharmacyapp/presentation/auth/admin/pages/settings_page.dart';
+import 'package:pharmacyapp/presentation/auth/admin/pages/manageproduk_page.dart';
 import 'package:pharmacyapp/presentation/auth/admin/pages/users_page.dart';
 import 'package:pharmacyapp/presentation/auth/admin/pages/add_product.dart';
 import 'package:pharmacyapp/presentation/auth/admin/pages/place_order.dart';
@@ -160,16 +160,16 @@ class _AdminDashboardState extends State<AdminDashboard> {
                   const ProductsPage(),
                 ),
                 _buildMenuCard(
-                  Icons.bar_chart,
+                  Icons.add_box,
                   "Tambah Produk",
                   Colors.orange,
                   const AddProduct(),
                 ),
                 _buildMenuCard(
-                  Icons.settings,
-                  "Pengaturan",
+                  Icons.disabled_by_default,
+                  "Hapus Produk",
                   Colors.grey,
-                  const SettingsPage(),
+                  const ManageProduct(),
                 ),
               ],
             ),
