@@ -3,18 +3,16 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:pharmacyapp/common/helper/images/image_display.dart';
 
-class ManageProduct extends StatefulWidget {
-  const ManageProduct({super.key});
+class DeleteProduk extends StatefulWidget {
+  const DeleteProduk({super.key});
 
   @override
-  State<ManageProduct> createState() => _ManageProductState();
+  State<DeleteProduk> createState() => _DeleteProdukState();
 }
 
-class _ManageProductState extends State<ManageProduct> {
-  final ImagePicker _picker = ImagePicker();
+class _DeleteProdukState extends State<DeleteProduk> {
   File? selectedImage;
   TextEditingController nameController = TextEditingController();
   TextEditingController priceController = TextEditingController();
@@ -116,11 +114,11 @@ class _ManageProductState extends State<ManageProduct> {
                   subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Price: ${product['price']}'),
+                      Text('Harga: ${product['price']}'),
                       Text(
-                          'Discounted Price: ${product['discountedPrice']}'), // Menampilkan harga diskon
+                          'Harga Diskon: ${product['discountedPrice']}'), // Menampilkan harga diskon
                       Text(
-                          'Sales: ${product['salesNumber']}'), // Menampilkan jumlah penjualan
+                          'Jumlah: ${product['salesNumber']}'), // Menampilkan jumlah penjualan
                     ],
                   ),
                   isThreeLine: true, // Memberikan ruang lebih pada subtitle
