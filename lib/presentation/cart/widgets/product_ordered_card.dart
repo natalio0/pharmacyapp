@@ -91,7 +91,7 @@ class ProductOrderedCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  '\$${productOrderedEntity.totalPrice}',
+                  '\$${(productOrderedEntity.totalPrice).toStringAsFixed(2)}',
                   style: const TextStyle(
                       fontWeight: FontWeight.w500, fontSize: 14),
                 ),

@@ -68,7 +68,7 @@ class Checkout extends StatelessWidget {
                 style: TextStyle(color: Colors.grey, fontSize: 16),
               ),
               Text(
-                '\$${CartHelper.calculateCartSubtotal(products) + 0.05 + 0.01}',
+                '\$${(CartHelper.calculateCartSubtotal(products) + 0.05 + 0.01).toStringAsFixed(2)}',
                 style:
                     const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               )

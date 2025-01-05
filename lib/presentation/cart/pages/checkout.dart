@@ -23,8 +23,9 @@ class CheckOutPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController addressCon =
-        TextEditingController(); // Pindahkan ke dalam build
+    final TextEditingController addressCon = TextEditingController();
+    bool isEmailSent = false;
+    bool isDownloaded = false;
 
     return Scaffold(
       appBar: const BasicAppbar(
@@ -38,8 +39,10 @@ class CheckOutPage extends StatelessWidget {
               try {
                 final orderCode = _generateOrderCode();
                 final createdDate = DateTime.now().toString();
+                final subtotalPrice =
+                    CartHelper.calculateCartSubtotal(products);
                 final totalPrice =
-                    CartHelper.calculateCartSubtotal(products) + 0.05 + 0.01;
+                    (subtotalPrice + 0.05 + 0.01).toStringAsFixed(2);
                 final shippingAddress = addressCon.text;
 
                 final receiptFile = await ReceiptGenerator.generateReceipt(
@@ -54,10 +57,11 @@ class CheckOutPage extends StatelessWidget {
                   context: context,
                   builder: (contextDialog) {
                     String recipientEmail = '';
+                    String emailStatusMessage = '';
+
                     return AlertDialog(
                       title: const Text('Bukti Bayar'),
                       content: SingleChildScrollView(
-                        // Agar struk bisa di-scroll jika panjang
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -66,38 +70,64 @@ class CheckOutPage extends StatelessWidget {
                             Text('Alamat Pengiriman: $shippingAddress'),
                             const Divider(),
                             Column(
-                              // Daftar Produk
                               children: products
-                                  .map((product) => Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(product.productTitle),
-                                          Text(
-                                              '\$${product.productPrice} x ${product.productQuantity}'),
-                                        ],
-                                      ))
+                                  .map(
+                                    (product) => Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Flexible(
+                                          child: Text(
+                                            product.productTitle,
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style:
+                                                const TextStyle(fontSize: 14),
+                                          ),
+                                        ),
+                                        Text(
+                                          '\$${product.productPrice} x ${product.productQuantity}',
+                                          style: const TextStyle(fontSize: 14),
+                                        ),
+                                      ],
+                                    ),
+                                  )
                                   .toList(),
                             ),
                             const Divider(),
                             Text('Ongkir: \$0.05'),
                             Text('Pajak \$0.01'),
-                            Text('Total: \$$totalPrice',
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold)),
+                            Text(
+                              'Total: \$${(subtotalPrice + 0.05 + 0.01).toStringAsFixed(2)}',
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            if (isEmailSent || isDownloaded) ...[
+                              const Divider(),
+                              Text(
+                                isEmailSent
+                                    ? 'Email berhasil dikirim'
+                                    : 'Receipt saved at ${receiptFile.path}',
+                                style: TextStyle(
+                                    color: isEmailSent
+                                        ? Colors.green
+                                        : Colors.blue),
+                              ),
+                            ],
                           ],
                         ),
                       ),
                       actions: [
                         TextButton(
                           onPressed: () {
+                            // Simpan receipt dan ubah status
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                   content: Text(
                                       'Receipt saved at ${receiptFile.path}')),
                             );
-                            AppNavigator.pushAndRemove(
-                                context, const OrderPlacedPage());
+                            isDownloaded = true;
+                            Navigator.of(contextDialog).setState(() {});
                           },
                           child: const Text('Download'),
                         ),
@@ -106,8 +136,7 @@ class CheckOutPage extends StatelessWidget {
                           child: TextField(
                             keyboardType: TextInputType.emailAddress,
                             decoration: const InputDecoration(
-                              hintText: 'Masukkan Email Tujuan',
-                            ),
+                                hintText: 'Masukkan Email Tujuan'),
                             onChanged: (value) {
                               recipientEmail = value;
                             },
@@ -125,33 +154,38 @@ class CheckOutPage extends StatelessWidget {
 
                             try {
                               await EmailSender.sendEmailWithAttachment(
-                                toEmail:
-                                    recipientEmail, // Gunakan email dari input
+                                toEmail: recipientEmail,
                                 subject: 'Bukti Bayar Anda',
                                 body:
                                     'Terima kasih atas pembelian Anda. Berikut adalah bukti bayar Anda.',
                                 attachmentPath: receiptFile.path,
                               );
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text('Email berhasil dikirim')),
-                              );
-                              Navigator.pop(contextDialog);
+                              isEmailSent = true;
+                              emailStatusMessage = 'Email berhasil dikirim';
                             } catch (e) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                    content: Text('Gagal mengirim email: $e')),
-                              );
+                              isEmailSent = false;
+                              emailStatusMessage = 'Gagal mengirim email: $e';
                             }
+
+                            // Update dialog UI after email status change
+                            Navigator.of(contextDialog).setState(() {});
                           },
                           child: const Text('Kirim via Email'),
                         ),
                         TextButton(
-                          // Tombol untuk menutup preview
                           onPressed: () {
-                            Navigator.pop(contextDialog);
-                            AppNavigator.pushAndRemove(context,
-                                const OrderPlacedPage()); // Close dialog preview
+                            // Tombol OK hanya aktif jika email atau download sudah dilakukan
+                            if (isEmailSent || isDownloaded) {
+                              AppNavigator.pushAndRemove(
+                                  context, const OrderPlacedPage());
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                      'Harap kirim email atau download receipt terlebih dahulu'),
+                                ),
+                              );
+                            }
                           },
                           child: const Text('OK'),
                         ),
@@ -159,8 +193,6 @@ class CheckOutPage extends StatelessWidget {
                     );
                   },
                 );
-
-                AppNavigator.pushAndRemove(context, const OrderPlacedPage());
               } catch (e) {
                 print('Error during order processing: $e');
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -183,7 +215,6 @@ class CheckOutPage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     TextField(
-                      // Gunakan addressCon yang dideklarasikan di build
                       controller: addressCon,
                       minLines: 2,
                       maxLines: 4,
@@ -197,7 +228,7 @@ class CheckOutPage extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              '\$${CartHelper.calculateCartSubtotal(products) + 0.05 + 0.01}',
+                              '\$${(CartHelper.calculateCartSubtotal(products) + 0.05 + 0.01).toStringAsFixed(2)}',
                               style: const TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
@@ -214,14 +245,12 @@ class CheckOutPage extends StatelessWidget {
                         ),
                       ),
                       onPressed: () {
-                        // Validasi apakah alamat pengiriman sudah diisi
                         if (addressCon.text.isEmpty) {
-                          // Jika kosong, tampilkan pesan error
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                                 content: Text('Alamat pengiriman harus diisi')),
                           );
-                          return; // Jangan lanjutkan ke proses order
+                          return;
                         }
 
                         String orderCode = _generateOrderCode();
@@ -233,7 +262,6 @@ class CheckOutPage extends StatelessWidget {
                           )
                         ];
 
-                        // Jika alamat pengiriman ada, lanjutkan proses checkout
                         context.read<ButtonStateCubit>().execute(
                               usecase: OrderRegistrationUseCase(),
                               params: OrderRegistrationReq(
@@ -242,13 +270,17 @@ class CheckOutPage extends StatelessWidget {
                                 products: products,
                                 createdDate: DateTime.now().toString(),
                                 itemCount: products.length,
-                                totalPrice:
-                                    CartHelper.calculateCartSubtotal(products),
+                                totalPrice: double.parse(
+                                    (CartHelper.calculateCartSubtotal(
+                                                products) +
+                                            0.05 +
+                                            0.01)
+                                        .toStringAsFixed(2)),
                                 shippingAddress: addressCon.text,
                               ),
                             );
                       },
-                    )
+                    ),
                   ],
                 );
               },

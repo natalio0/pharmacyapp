@@ -8,7 +8,7 @@ class ReceiptGenerator {
     required String orderCode,
     required String createdDate,
     required List<ProductOrderedEntity> products,
-    required double totalPrice,
+    required String totalPrice,
     required String shippingAddress,
   }) async {
     final pdf = pw.Document();
@@ -48,7 +48,7 @@ class ReceiptGenerator {
               ),
               pw.SizedBox(height: 16),
               pw.Text(
-                'Total: \$${totalPrice.toStringAsFixed(2)}',
+                'Total: \$$totalPrice',
                 style:
                     pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold),
               ),
