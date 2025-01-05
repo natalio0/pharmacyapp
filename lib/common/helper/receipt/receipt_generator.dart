@@ -27,7 +27,14 @@ class ReceiptGenerator {
               pw.SizedBox(height: 16),
               pw.Text('Produk:', style: pw.TextStyle(fontSize: 18)),
               pw.Table.fromTextArray(
-                headers: ['Nama', 'Harga', 'Jumlah', 'Subtotal','ongkir','Pajak'],
+                headers: [
+                  'Nama',
+                  'Harga',
+                  'Jumlah',
+                  'Subtotal',
+                  'Ongkir',
+                  'Pajak'
+                ],
                 data: products.map((product) {
                   return [
                     product.productTitle,
@@ -42,7 +49,8 @@ class ReceiptGenerator {
               pw.SizedBox(height: 16),
               pw.Text(
                 'Total: \$${totalPrice.toStringAsFixed(2)}',
-                style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold),
+                style:
+                    pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold),
               ),
             ],
           );
@@ -50,8 +58,16 @@ class ReceiptGenerator {
       ),
     );
 
-    final outputDir = await getApplicationDocumentsDirectory();
-    final file = File('${outputDir.path}/Bukti bayar_$orderCode.pdf');
+    // Save the file to the Downloads directory
+    final outputDir = await getExternalStorageDirectory();
+    final downloadsPath = Directory('${outputDir!.path}/Download');
+
+    if (!downloadsPath.existsSync()) {
+      downloadsPath.createSync(
+          recursive: true); // Create Downloads directory if it doesn't exist
+    }
+
+    final file = File('${downloadsPath.path}/Bukti_bayar_$orderCode.pdf');
     await file.writeAsBytes(await pdf.save());
 
     return file;

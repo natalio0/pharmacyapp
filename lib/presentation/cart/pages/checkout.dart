@@ -96,7 +96,8 @@ class CheckOutPage extends StatelessWidget {
                                   content: Text(
                                       'Receipt saved at ${receiptFile.path}')),
                             );
-                            Navigator.pop(context);
+                            AppNavigator.pushAndRemove(
+                                context, const OrderPlacedPage());
                           },
                           child: const Text('Download'),
                         ),
