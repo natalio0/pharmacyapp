@@ -12,7 +12,7 @@ class AdminDashboardPage extends StatelessWidget {
       body: const Center(
         child: Text(
           'Selamat datang di Dashboard Admin',
-          style: TextStyle(fontSize: 24),
+          style: TextStyle(fontSize: 20),
         ),
       ),
     );

@@ -214,6 +214,16 @@ class CheckOutPage extends StatelessWidget {
                         ),
                       ),
                       onPressed: () {
+                        // Validasi apakah alamat pengiriman sudah diisi
+                        if (addressCon.text.isEmpty) {
+                          // Jika kosong, tampilkan pesan error
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('Alamat pengiriman harus diisi')),
+                          );
+                          return; // Jangan lanjutkan ke proses order
+                        }
+
                         String orderCode = _generateOrderCode();
                         List<OrderStatusEntity> orderStatus = [
                           OrderStatusEntity(
@@ -222,6 +232,8 @@ class CheckOutPage extends StatelessWidget {
                             createdDate: Timestamp.fromDate(DateTime.now()),
                           )
                         ];
+
+                        // Jika alamat pengiriman ada, lanjutkan proses checkout
                         context.read<ButtonStateCubit>().execute(
                               usecase: OrderRegistrationUseCase(),
                               params: OrderRegistrationReq(
@@ -236,7 +248,7 @@ class CheckOutPage extends StatelessWidget {
                               ),
                             );
                       },
-                    ),
+                    )
                   ],
                 );
               },

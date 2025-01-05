@@ -98,7 +98,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
           children: [
             const Text(
               "Selamat Datang, Admin",
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20),
             // Row(
@@ -113,13 +113,17 @@ class _AdminDashboardState extends State<AdminDashboard> {
             // Bagian Statistik
             const Text(
               "Statistik",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             GridView.count(
               shrinkWrap: true,
               crossAxisCount: 3,
               children: [
-                _buildStatCard("Pengguna", totalUsers.toString(), Colors.blue),
+                _buildStatCard(
+                  "Pengguna",
+                  totalUsers.toString(),
+                  Colors.blue,
+                ),
                 _buildStatCard("Pesanan", totalOrders.toString(), Colors.green),
                 _buildStatCard("Produk", totalProducts.toString(), Colors.red),
               ],
@@ -190,7 +194,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
           children: [
             Text(
               title,
-              style: const TextStyle(color: Colors.white, fontSize: 16),
+              style: const TextStyle(color: Colors.white, fontSize: 10),
             ),
             const SizedBox(height: 10),
             Text(

@@ -179,16 +179,34 @@ class GenderAndAgeSelectionPage extends StatelessWidget {
       child: Center(
         child: Builder(builder: (context) {
           return BasicReactiveButton(
-              onPressed: () {
-                userCreationReq.gender =
-                    context.read<GenderSelectionCubit>().selectedIndex;
-                userCreationReq.age =
-                    context.read<AgeSelectionCubit>().selectedAge;
-                context
-                    .read<ButtonStateCubit>()
-                    .execute(usecase: SignupUseCase(), params: userCreationReq);
-              },
-              title: 'Finish');
+            onPressed: () {
+              // Ambil gender dan age dari cubit
+              final int? gender =
+                  context.read<GenderSelectionCubit>().selectedIndex;
+              final String? age = context.read<AgeSelectionCubit>().selectedAge;
+
+              // Validasi: pastikan age tidak kosong
+              if (age == null || age.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Please select your age'),
+                    behavior: SnackBarBehavior.floating,
+                  ),
+                );
+                return; // Hentikan proses jika umur kosong
+              }
+
+              // Set gender dan age ke userCreationReq
+              userCreationReq.gender = gender;
+              userCreationReq.age = age;
+
+              // Eksekusi tombol dengan parameter userCreationReq
+              context
+                  .read<ButtonStateCubit>()
+                  .execute(usecase: SignupUseCase(), params: userCreationReq);
+            },
+            title: 'Finish',
+          );
         }),
       ),
     );
