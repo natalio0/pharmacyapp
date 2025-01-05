@@ -122,7 +122,7 @@ class HomePageState extends State<HomePage> {
                               style: const TextStyle(
                                 color: AppColors.primary,
                                 fontWeight: FontWeight.w600,
-                                fontSize: 15,
+                                fontSize: 12,
                               ),
                             ),
                           ),
@@ -138,7 +138,7 @@ class HomePageState extends State<HomePage> {
                           ),
                           Icon(
                             listOfIcons[index],
-                            size: displayWidth * .076,
+                            size: displayWidth * .06,
                             color: index == currentIndex
                                 ? AppColors.primary
                                 : Colors.black26,

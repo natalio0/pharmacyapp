@@ -42,13 +42,12 @@ class Header extends StatelessWidget {
     );
   }
 
-  // Function to generate the profile image URL
-  String generateUserImageURL(String imagePath) {
-    // Assuming that `AppUrl.userImage` is the base URL for Firebase Storage
-    return 'https://firebasestorage.googleapis.com/v0/b/pharmacyapp-0101-dev.appspot.com/o/Users%2FImages%2F$imagePath?alt=media';
+  // Generate the profile image URL using userId
+  String generateUserImageURL(String userId) {
+    return 'https://firebasestorage.googleapis.com/v0/b/pharmacyapp-0101-dev.appspot.com/o/Users%2FImages%2F$userId.jpg?alt=media';
   }
 
-  // Widget to display the profile image
+  // Profile Image Widget
   Widget _profileImage(UserEntity user, BuildContext context) {
     return GestureDetector(
       onTap: () {
@@ -56,31 +55,41 @@ class Header extends StatelessWidget {
       },
       child: FutureBuilder<String>(
         future: Future.delayed(
-            const Duration(seconds: 1),
-            () =>
-                generateUserImageURL(user.image)), // Simulating async operation
+          const Duration(seconds: 1),
+          () => generateUserImageURL(
+              user.userId), // Use userId instead of imagePath
+        ),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const CircularProgressIndicator(); // Display a loading indicator while waiting
-          }
-          if (snapshot.hasError || !snapshot.hasData) {
             return const CircleAvatar(
-              radius: 30, // Reduced radius for smaller size
-              backgroundImage: NetworkImage(
-                  'https://via.placeholder.com/150'), // Fallback image if an error occurs
+              radius: 20,
+              backgroundColor: Colors.grey,
+              child: CircularProgressIndicator(
+                color: Colors.white,
+                strokeWidth: 2,
+              ),
             );
           }
+
+          if (snapshot.hasError || !snapshot.hasData) {
+            // Fallback image in case of error
+            return const CircleAvatar(
+              radius: 20,
+              backgroundImage: NetworkImage('https://via.placeholder.com/150'),
+            );
+          }
+
+          // Display the profile image from Firebase Storage
           return CircleAvatar(
-            radius: 30, // Reduced radius for smaller size
-            backgroundImage:
-                NetworkImage(snapshot.data!), // Use the fetched image URL
+            radius: 25,
+            backgroundImage: NetworkImage(snapshot.data!),
           );
         },
       ),
     );
   }
 
-  // Widget to display the welcome message
+  // Welcome Message Widget
   Widget _welcomeMessage(UserEntity user) {
     return Container(
       height: 40,
@@ -91,14 +100,14 @@ class Header extends StatelessWidget {
       ),
       child: Center(
         child: Text(
-          'Hi, ${user.firstName}', // Displaying the user's first name
+          'Hi, ${user.firstName}', // Display user's first name
           style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
         ),
       ),
     );
   }
 
-  // Widget to display the cart icon
+  // Cart Icon Widget
   Widget _card(BuildContext context) {
     return GestureDetector(
       onTap: () {

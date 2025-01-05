@@ -57,7 +57,7 @@ class ProductCard extends StatelessWidget {
                     Text(
                       productEntity.title,
                       style: const TextStyle(
-                          fontSize: 12,
+                          fontSize: 10,
                           overflow: TextOverflow.ellipsis,
                           fontWeight: FontWeight.w300),
                     ),
