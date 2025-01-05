@@ -1,8 +1,9 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart'; // Tambahkan dependensi Firebase Firestore
+import 'package:cloud_firestore/cloud_firestore.dart'; 
+import 'package:pharmacyapp/presentation/auth/admin/pages/edit_produk.dart';
 import 'package:pharmacyapp/presentation/auth/admin/pages/product_page.dart';
-import 'package:pharmacyapp/presentation/auth/admin/pages/manageproduk_page.dart';
+import 'package:pharmacyapp/presentation/auth/admin/pages/delete_produk.dart';
 import 'package:pharmacyapp/presentation/auth/admin/pages/users_page.dart';
 import 'package:pharmacyapp/presentation/auth/admin/pages/add_product.dart';
 import 'package:pharmacyapp/presentation/auth/admin/pages/place_order.dart';
@@ -173,7 +174,13 @@ class _AdminDashboardState extends State<AdminDashboard> {
                   Icons.disabled_by_default,
                   "Hapus Produk",
                   Colors.grey,
-                  const ManageProduct(),
+                  const DeleteProduk(),
+                ),
+                _buildMenuCard(
+                  Icons.edit_note,
+                  "Edit Produk",
+                  Colors.black,
+                  const EditProduct(),
                 ),
               ],
             ),
